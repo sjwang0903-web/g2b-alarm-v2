@@ -81,7 +81,7 @@
                         <span>공고 목록</span>
                         <span id="notice-count" class="bg-blue-100 text-blue-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">0</span>
                     </h2>
-                    <span id="admin-notice-info" class="text-xs text-amber-600 hidden font-medium">관리자 모드 (숨김 포함)</span>
+                    <span id="admin-notice-info" class="text-xs text-amber-600 hidden font-medium">관리자 모드 (숨김 포함 / 일정 편집 가능)</span>
                 </div>
                 <div id="notice-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
@@ -116,6 +116,36 @@
         </div>
     </main>
 
+    <!-- 관리자용 일정 편집 모달 -->
+    <div id="schedule-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-200">
+            <h3 class="font-bold text-base text-slate-900"><i class="fa-solid fa-calendar-pen text-blue-600 mr-1.5"></i> 공고 일정 편집 (관리자)</h3>
+            <p id="edit-notice-title" class="text-xs text-slate-500 font-semibold truncate"></p>
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">공고일 (시작일)</label>
+                    <input type="text" id="edit-date-notice" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">제출일 / 마감일 (종료일)</label>
+                    <input type="text" id="edit-date-limit" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">개찰일 / 평가일</label>
+                    <input type="text" id="edit-date-open" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+
+            <input type="hidden" id="edit-notice-id">
+
+            <div class="flex justify-end gap-2 pt-3 border-t">
+                <button onclick="closeScheduleModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-200">취소</button>
+                <button onclick="saveEditedSchedule()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700">저장</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 공고 상세 내용 팝업 모달 -->
     <div id="detail-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
@@ -130,7 +160,7 @@
         </div>
     </div>
 
-    <!-- GitHub Actions 구동 로그 확인 팝업 모달 -->
+    <!-- GitHub Actions 구동 로그 확인 모달 -->
     <div id="log-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 text-emerald-400 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-700 font-mono">
             <div class="px-6 py-4 bg-slate-800 text-white flex justify-between items-center border-b border-slate-700">
@@ -204,6 +234,10 @@
                         if (localState[n.id].isHidden !== undefined) n.isHidden = localState[n.id].isHidden;
                         if (localState[n.id].isImportant !== undefined) n.isImportant = localState[n.id].isImportant;
                         if (localState[n.id].isChecked !== undefined) n.isChecked = localState[n.id].isChecked;
+                        if (localState[n.id].comments !== undefined) n.comments = localState[n.id].comments;
+                        if (localState[n.id].dateNotice !== undefined) n.dateNotice = localState[n.id].dateNotice;
+                        if (localState[n.id].dateLimit !== undefined) n.dateLimit = localState[n.id].dateLimit;
+                        if (localState[n.id].dateOpen !== undefined) n.dateOpen = localState[n.id].dateOpen;
                     }
                 });
                 showStatus("✅ 데이터를 성공적으로 불러왔습니다.");
@@ -250,17 +284,12 @@
             listEl.innerHTML = '';
 
             let filtered = allNotices.filter(item => {
-                // 일반 사용자는 숨김 공고 제외, 관리자 모드에서는 숨김 공고도 포함하여 표시
                 if (!isAdmin && item.isHidden) return false;
                 if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) return false;
                 if (keyword && !(item.ntceNm || '').toLowerCase().includes(keyword) && !(item.organ || '').toLowerCase().includes(keyword)) return false;
                 return true;
             });
 
-            // 정렬 순서: 
-            // 0. 관리자 모드에서 숨김 처리된 공고(isHidden)는 맨 아래로
-            // 1. 중요 지정 공고(isImportant) 맨 위
-            // 2. 최근 공고일(dateNotice) 기준 최신순
             filtered.sort((a, b) => {
                 if (a.isHidden && !b.isHidden) return 1;
                 if (!a.isHidden && b.isHidden) return -1;
@@ -282,13 +311,14 @@
             }
 
             filtered.forEach(item => {
-                // 관리자 모드에서 숨김 처리된 공고는 회색 배경 및 투명도 적용
                 let isCheckedStyle = item.isChecked ? "bg-emerald-50/50 border-emerald-200 opacity-70" : "bg-white border-slate-200";
                 if (isAdmin && item.isHidden) {
                     isCheckedStyle = "bg-slate-200 border-slate-300 opacity-60 text-slate-500";
                 }
 
-                const isImportantBorder = item.isImportant ? "border-l-4 border-l-rose-500 shadow-md" : "";
+                // 중요 공고: 테두리 전체와 제목이 붉게 되도록 설정
+                const isImportantStyle = item.isImportant ? "border-2 border-rose-500 shadow-md bg-rose-50/20" : "";
+                const titleColorStyle = item.isImportant ? "text-rose-600 font-extrabold" : "text-slate-900";
                 const badge = getCategoryBadge(item.ntceKindNm);
 
                 let ddayBadgeHtml = '';
@@ -329,10 +359,7 @@
                     scheduleHtml = `• 공고일: ${item.dateNotice || '-'}<br>• 현설일: ${item.dateBrief || '-'}<br>• 등록일: ${item.dateReg || '-'}<br>• 제출일: ${item.dateLimit || '-'}<br>• 평가일: ${item.dateOpen || '-'}`;
                 }
 
-                let urlHtml = '';
-                if (item.url) {
-                    urlHtml = `<div class="mt-3 text-xs"><b>바로가기:</b> <a href="${item.url}" target="_blank" class="text-blue-600 hover:underline font-semibold">[나라장터 바로가기]</a></div>`;
-                }
+                let urlHtml = item.url ? `<div class="mt-3 text-xs"><b>바로가기:</b> <a href="${item.url}" target="_blank" class="text-blue-600 hover:underline font-semibold">[나라장터 바로가기]</a></div>` : '';
 
                 let filesHtml = '';
                 if (item.files && item.files.length > 0) {
@@ -344,19 +371,25 @@
                         </div>`;
                 }
 
-                let chgHtml = '';
-                if (item.chgRsn && item.chgRsn !== '-') {
-                    chgHtml = `<div class="text-rose-600 font-bold text-xs mb-2">* 변경/취소 사유: ${item.chgRsn}</div>`;
-                }
+                let chgHtml = (item.chgRsn && item.chgRsn !== '-') ? `<div class="text-rose-600 font-bold text-xs mb-2">* 변경/취소 사유: ${item.chgRsn}</div>` : '';
+
+                // 댓글 목록 렌더링
+                let commentsArr = item.comments || [];
+                let commentsHtml = commentsArr.map((c, cIdx) => `
+                    <div class="flex justify-between items-start text-xs bg-slate-50 p-2 rounded border border-slate-200">
+                        <div><span class="text-slate-400 text-[10px] mr-1">${c.date}</span><span>${c.text}</span></div>
+                        <button onclick="deleteComment('${item.id}', ${cIdx})" class="text-slate-400 hover:text-rose-600 ml-2"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `).join('');
 
                 listEl.innerHTML += `
-                    <div class="p-5 rounded-xl border ${isCheckedStyle} ${isImportantBorder} shadow-sm flex flex-col justify-between transition hover:shadow relative">
+                    <div class="p-5 rounded-xl border ${isCheckedStyle} ${isImportantStyle} shadow-sm flex flex-col justify-between transition hover:shadow relative">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-2">
                                 <span class="px-2 py-0.5 border font-bold text-xs rounded ${badge.bg}">${badge.name}</span>
                                 ${ddayBadgeHtml}
                             </div>
-                            <h3 class="font-bold text-sm text-slate-900 mb-2 leading-snug">${item.ntceNm}</h3>
+                            <h3 class="font-bold text-sm ${titleColorStyle} mb-2 leading-snug">${item.ntceNm}</h3>
                             ${chgHtml}
                             
                             <div class="mt-3">
@@ -373,6 +406,18 @@
 
                             ${urlHtml}
                             ${filesHtml}
+
+                            <!-- 댓글 영역 -->
+                            <div class="mt-4 pt-3 border-t border-slate-100 space-y-2">
+                                <div class="font-bold text-xs text-slate-700 flex items-center gap-1">
+                                    <i class="fa-regular fa-comments text-blue-600"></i> 의견 및 댓글 (${commentsArr.length})
+                                </div>
+                                <div class="space-y-1 max-h-32 overflow-y-auto">${commentsHtml}</div>
+                                <div class="flex gap-1.5 mt-2">
+                                    <input type="text" id="comment-input-${item.id}" placeholder="댓글을 입력하세요..." class="flex-1 px-2.5 py-1.5 border rounded text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+                                    <button onclick="addComment('${item.id}')" class="px-3 py-1.5 bg-slate-800 text-white rounded text-xs font-semibold hover:bg-slate-700">등록</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mt-5 pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
@@ -381,6 +426,7 @@
                                 <span>확인 완료</span>
                             </label>
                             <div class="flex items-center gap-2">
+                                ${isAdmin ? `<button onclick="openScheduleModal('${item.id}')" class="px-2.5 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200">일정편집</button>` : ''}
                                 <button onclick="toggleImportant('${item.id}')" class="px-2.5 py-1 rounded text-xs font-medium transition ${item.isImportant ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
                                     ${item.isImportant ? '★ 중요' : '중요 지정'}
                                 </button>
@@ -391,6 +437,72 @@
             });
 
             renderCalendar(currentCalendarDate, filtered);
+        }
+
+        // 일정 편집 모달 제어 함수들
+        function openScheduleModal(id) {
+            const item = allNotices.find(n => n.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-notice-id').value = item.id;
+            document.getElementById('edit-notice-title').innerText = item.ntceNm;
+            document.getElementById('edit-date-notice').value = item.dateNotice || '';
+            document.getElementById('edit-date-limit').value = item.dateLimit || '';
+            document.getElementById('edit-date-open').value = item.dateOpen || '';
+
+            document.getElementById('schedule-modal').classList.remove('hidden');
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('schedule-modal').classList.add('hidden');
+        }
+
+        function saveEditedSchedule() {
+            const id = document.getElementById('edit-notice-id').value;
+            const item = allNotices.find(n => n.id === id);
+            if (item) {
+                item.dateNotice = document.getElementById('edit-date-notice').value;
+                item.dateLimit = document.getElementById('edit-date-limit').value;
+                item.dateOpen = document.getElementById('edit-date-open').value;
+
+                saveState(id, {
+                    dateNotice: item.dateNotice,
+                    dateLimit: item.dateLimit,
+                    dateOpen: item.dateOpen
+                });
+
+                closeScheduleModal();
+                renderDashboard();
+                selectCalendarDate(new Date().toISOString().slice(0, 10));
+                showStatus("✅ 일정이 수정되었습니다.");
+            }
+        }
+
+        // 댓글 추가 및 삭제 함수
+        function addComment(id) {
+            const input = document.getElementById(`comment-input-${id}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const item = allNotices.find(n => n.id === id);
+            if (item) {
+                if (!item.comments) item.comments = [];
+                const nowStr = new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                item.comments.push({ text: text, date: nowStr });
+
+                saveState(id, { comments: item.comments });
+                input.value = '';
+                renderDashboard();
+            }
+        }
+
+        function deleteComment(id, commentIdx) {
+            const item = allNotices.find(n => n.id === id);
+            if (item && item.comments) {
+                item.comments.splice(commentIdx, 1);
+                saveState(id, { comments: item.comments });
+                renderDashboard();
+            }
         }
 
         function toggleCheck(id) {
@@ -467,7 +579,6 @@
                 
                 const activeEvents = [];
                 notices.forEach(n => {
-                    // 숨김 처리된 공고는 달력에 표시하지 않음
                     if (n.isHidden) return;
 
                     const start = (n.dateNotice || '').slice(0, 10);
@@ -500,7 +611,6 @@
 
             const matched = [];
             allNotices.forEach(n => {
-                // 숨김 처리된 공고는 달력 하단 진행현황에서도 제외
                 if (n.isHidden) return;
 
                 const start = (n.dateNotice || '').slice(0, 10);
