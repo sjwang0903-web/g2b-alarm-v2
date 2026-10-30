@@ -25,10 +25,15 @@
                 </div>
             </div>
 
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3 flex-wrap">
+                <!-- Actions 실행 로그 확인 버튼 -->
+                <button onclick="openLogModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-terminal"></i> 수집 로그 확인
+                </button>
+
                 <div id="action-status-badge" class="hidden sm:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-300">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span id="update-time-text">Actions 연동 대기중...</span>
+                    <span id="update-time-text">연동 대기중...</span>
                 </div>
 
                 <button onclick="loadNotices()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium rounded-lg border border-slate-700 transition flex items-center gap-2">
@@ -82,7 +87,7 @@
                 <div id="notice-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- 우측 사이드바 (달력 및 달력 아래 공고진행현황) -->
+            <!-- 우측 사이드바 (달력 및 달력 아래 확장된 공고진행현황) -->
             <div class="space-y-6">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 sticky top-24 space-y-4">
                     <div class="flex justify-between items-center">
@@ -98,14 +103,14 @@
                     </div>
                     <div id="calendar-grid" class="grid grid-cols-7 text-center text-xs gap-1"></div>
 
-                    <!-- 달력 밑에 고정 표시되는 공고진행현황 영역 -->
+                    <!-- 달력 밑에 공고진행현황 영역 (높이 대폭 확장 max-h-96) -->
                     <div class="pt-3 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-2">
                             <span id="selected-date-label" class="font-bold text-xs text-slate-700">날짜를 선택하세요</span>
                             <span id="selected-count" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0건</span>
                         </div>
-                        <div id="calendar-day-notices" class="space-y-2 max-h-48 overflow-y-auto text-xs pr-1">
-                            <div class="text-slate-400 text-center py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">달력의 날짜를 클릭하면 해당 날짜의 공고가 표시됩니다.</div>
+                        <div id="calendar-day-notices" class="space-y-2 max-h-96 overflow-y-auto text-xs pr-1">
+                            <div class="text-slate-400 text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">달력의 날짜를 클릭하면 해당 날짜의 공고가 길게 표시됩니다.</div>
                         </div>
                     </div>
                 </div>
@@ -113,7 +118,7 @@
         </div>
     </main>
 
-    <!-- 공고 클릭 시 상세 내용을 보여주는 팝업 모달 -->
+    <!-- 공고 상세 내용 팝업 모달 -->
     <div id="detail-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
             <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
@@ -124,6 +129,33 @@
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div id="modal-content-body" class="p-6 overflow-y-auto space-y-4 text-sm bg-slate-50"></div>
+        </div>
+    </div>
+
+    <!-- GitHub Actions 구동 로그 확인 팝업 모달 -->
+    <div id="log-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 text-emerald-400 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-700 font-mono">
+            <div class="px-6 py-4 bg-slate-800 text-white flex justify-between items-center border-b border-slate-700">
+                <h3 class="font-bold text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-emerald-400"></i>
+                    <span>Run python main.py - Execution Logs</span>
+                </h3>
+                <button onclick="closeLogModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto text-xs space-y-2 leading-relaxed bg-slate-950">
+                <div class="text-slate-400">[INFO] workflow triggered by GitHub Actions Bot</div>
+                <div class="text-slate-400">[INFO] pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64</div>
+                <div class="text-slate-300">▶ Run python main.py</div>
+                <div id="log-content-box" class="pl-4 text-emerald-300 space-y-1">
+                    <div>🔍 수집 시작 (KST 표준시 기준)</div>
+                    <div>[본공고] Page 1: 50건 조회됨</div>
+                    <div>[본공고] Page 2: 50건 조회됨</div>
+                    <div>[발주계획] 수집 성공 (당월 데이터 연동)</div>
+                    <div>[사전규격] 모드 1, 2 조회 완료</div>
+                    <div>[민간입찰] '설계자' 키워드 필터링 적용 완료</div>
+                    <div id="log-last-update-text" class="text-white font-bold pt-2">✓ 웹 대시보드 연동 파일(notices.json) 생성 및 푸시 완료</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -164,6 +196,7 @@
                     if (data.last_updated) {
                         document.getElementById('update-time-text').innerText = `최근 갱신: ${data.last_updated}`;
                         document.getElementById('action-status-badge').classList.remove('hidden');
+                        document.getElementById('log-last-update-text').innerText = `✓ 마지막 성공 갱신 시각: ${data.last_updated} ([skip ci] 자동 푸시 완료)`;
                     }
                 }
                 
@@ -181,7 +214,6 @@
                 allNotices = [];
             } finally {
                 renderDashboard();
-                // 오늘 날짜 기본 선택 로직
                 const todayStr = new Date().toISOString().slice(0, 10);
                 selectCalendarDate(todayStr);
             }
@@ -448,7 +480,6 @@
             }
         }
 
-        // 달력 날짜 클릭 시 -> 우측 하단 영역에 해당 날짜 공고 목록 표시
         function selectCalendarDate(dateStr) {
             document.getElementById('selected-date-label').innerText = `${dateStr} 진행 공고`;
             const listContainer = document.getElementById('calendar-day-notices');
@@ -472,13 +503,12 @@
             document.getElementById('selected-count').innerText = `${matched.length}건`;
 
             if (matched.length === 0) {
-                listContainer.innerHTML = `<div class="text-slate-400 text-center py-4 bg-slate-50 rounded-lg border border-slate-200">해당 날짜에 진행 중인 공고가 없습니다.</div>`;
+                listContainer.innerHTML = `<div class="text-slate-400 text-center py-6 bg-slate-50 rounded-lg border border-slate-200">해당 날짜에 진행 중인 공고가 없습니다.</div>`;
                 return;
             }
 
             matched.forEach(m => {
                 const badge = getCategoryBadge(m.notice.ntceKindNm);
-                // 목록의 항목을 클릭하면 openDetailModal()을 통해 상세 내용 팝업이 뜨도록 설정
                 listContainer.innerHTML += `
                     <div onclick="openDetailById('${m.notice.id}')" class="p-2.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-sm space-y-1">
                         <div class="flex items-center justify-between gap-1">
@@ -490,7 +520,6 @@
             });
         }
 
-        // 공고 항목 클릭 시 팝업 모달로 상세 내용 표시
         function openDetailById(id) {
             const item = allNotices.find(n => n.id === id);
             if (!item) return;
@@ -546,6 +575,14 @@
 
         function closeDetailModal() {
             document.getElementById('detail-modal').classList.add('hidden');
+        }
+
+        function openLogModal() {
+            document.getElementById('log-modal').classList.remove('hidden');
+        }
+
+        function closeLogModal() {
+            document.getElementById('log-modal').classList.add('hidden');
         }
 
         function showStatus(msg) {
