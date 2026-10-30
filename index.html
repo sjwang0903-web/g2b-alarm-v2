@@ -58,7 +58,7 @@
             </button>
         </div>
 
-        <!-- 탭 및 검색 바 -->
+        <!-- 탭 및 검색 바 ([숨김 공고] 탭 추가) -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
             <div class="flex flex-wrap gap-2">
                 <button onclick="filterType('ALL')" id="tab-ALL" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-white shadow-sm">전체</button>
@@ -67,6 +67,7 @@
                 <button onclick="filterType('사전규격')" id="tab-사전규격" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100">사전규격</button>
                 <button onclick="filterType('발주계획')" id="tab-발주계획" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100">발주계획</button>
                 <button onclick="filterType('COMMENTS')" id="tab-COMMENTS" class="tab-btn hidden px-4 py-2 rounded-lg text-sm font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200"><i class="fa-regular fa-comments mr-1"></i> 댓글 모아보기</button>
+                <button onclick="filterType('HIDDEN')" id="tab-HIDDEN" class="tab-btn hidden px-4 py-2 rounded-lg text-sm font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200"><i class="fa-solid fa-eye-slash mr-1"></i> 숨김 공고</button>
             </div>
             <div class="relative flex-1 max-w-md">
                 <input type="text" id="search-input" onkeyup="renderDashboard()" placeholder="공고명, 기관명 검색..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -226,11 +227,14 @@
             document.getElementById('admin-notice-info').classList.toggle('hidden', !isAdmin);
             
             const commentTab = document.getElementById('tab-COMMENTS');
+            const hiddenTab = document.getElementById('tab-HIDDEN');
             if (isAdmin) {
                 commentTab.classList.remove('hidden');
+                hiddenTab.classList.remove('hidden');
             } else {
                 commentTab.classList.add('hidden');
-                if (currentTypeFilter === 'COMMENTS') {
+                hiddenTab.classList.add('hidden');
+                if (currentTypeFilter === 'COMMENTS' || currentTypeFilter === 'HIDDEN') {
                     filterType('ALL');
                 }
             }
@@ -265,13 +269,12 @@
                     }
                 }
                 
-                // 신규 수집된 공고에 대한 최초 발견 시간(discoveredAt) 기록 (최초 1회 부여)
                 allNotices.forEach(n => {
                     if (!localState[n.id]) {
                         localState[n.id] = {};
                     }
                     if (!localState[n.id].discoveredAt) {
-                        localState[n.id].discoveredAt = nowTime; // 처음 로드/발견된 시점 기록
+                        localState[n.id].discoveredAt = nowTime;
                     }
 
                     if (localState[n.id]) {
@@ -330,12 +333,17 @@
             listEl.innerHTML = '';
 
             let filtered = allNotices.filter(item => {
-                if (!isAdmin && item.isHidden) return false;
-                
-                if (currentTypeFilter === 'COMMENTS') {
-                    if (!item.comments || item.comments.length === 0) return false;
-                } else if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) {
-                    return false;
+                // [숨김 공고] 탭일 때는 숨겨진 공고만 추출
+                if (currentTypeFilter === 'HIDDEN') {
+                    if (!item.isHidden) return false;
+                } else {
+                    if (!isAdmin && item.isHidden) return false;
+                    
+                    if (currentTypeFilter === 'COMMENTS') {
+                        if (!item.comments || item.comments.length === 0) return false;
+                    } else if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) {
+                        return false;
+                    }
                 }
 
                 if (keyword && !(item.ntceNm || '').toLowerCase().includes(keyword) && !(item.organ || '').toLowerCase().includes(keyword)) return false;
@@ -343,8 +351,10 @@
             });
 
             filtered.sort((a, b) => {
-                if (a.isHidden && !b.isHidden) return 1;
-                if (!a.isHidden && b.isHidden) return -1;
+                if (currentTypeFilter !== 'HIDDEN') {
+                    if (a.isHidden && !b.isHidden) return 1;
+                    if (!a.isHidden && b.isHidden) return -1;
+                }
 
                 if (currentTypeFilter === 'COMMENTS') {
                     const latestA = a.comments && a.comments.length > 0 ? Math.max(...a.comments.map(c => c.timestamp || 0)) : 0;
@@ -364,7 +374,7 @@
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `<div class="col-span-2 bg-white p-12 text-center rounded-xl border border-slate-200 text-slate-400">등록된 공고가 없습니다.</div>`;
-                renderCalendar(currentCalendarDate, []);
+                renderCalendar(currentCalendarDate, filtered);
                 return;
             }
 
@@ -381,7 +391,6 @@
                 const titleColorStyle = item.isImportant ? "text-rose-600 font-extrabold" : "text-slate-900";
                 const badge = getCategoryBadge(item.ntceKindNm);
 
-                // 새로 수집된 공고(72시간 이내)인 경우 공고 상단에 NEW 뱃지 표시
                 const isNewNotice = item.discoveredAt && (nowTime - item.discoveredAt < seventyTwoHours);
                 const noticeNewBadge = isNewNotice ? `<span class="px-2 py-0.5 bg-rose-500 text-white text-[10px] font-extrabold rounded animate-pulse shadow-sm">NEW 공고</span>` : '';
 
@@ -437,7 +446,6 @@
 
                 let chgHtml = (item.chgRsn && item.chgRsn !== '-') ? `<div class="text-rose-600 font-bold text-xs mb-2">* 변경/취소 사유: ${item.chgRsn}</div>` : '';
 
-                // 댓글 목록 (72시간 이내 작성된 댓글에 NEW 배지 표시)
                 let commentsArr = item.comments || [];
                 let commentsHtml = commentsArr.map((c, cIdx) => {
                     const isNewComment = c.timestamp && (nowTime - c.timestamp < seventyTwoHours);
@@ -631,8 +639,12 @@
             else if (type === '사전규격') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white shadow-sm";
             else if (type === '발주계획') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-orange-600 text-white shadow-sm";
             else if (type === 'COMMENTS') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white shadow-sm border border-amber-600";
+            else if (type === 'HIDDEN') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 text-white shadow-sm border border-rose-600";
 
-            document.getElementById('list-title').innerText = type === 'COMMENTS' ? '댓글 모아보기 목록' : '공고 목록';
+            let titleText = '공고 목록';
+            if (type === 'COMMENTS') titleText = '댓글 모아보기 목록';
+            if (type === 'HIDDEN') titleText = '숨김 공고 목록';
+            document.getElementById('list-title').innerText = titleText;
 
             renderDashboard();
         }
