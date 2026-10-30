@@ -1,6 +1,165 @@
 [
     {
         "id": "AUTO_001",
+        "ntceKindNm": "본공고",
+        "ntceNm": "국제물류진흥지역 기본계획 수립 연구",
+        "organ": "국토교통부",
+        "price": 45454545.0,
+        "dateNotice": "2026-10-23 07:46",
+        "dateBrief": "-",
+        "dateLimit": "2026-11-03 10:00",
+        "dateOpen": "2026-11-03 11:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01781035&bidPbancOrd=000",
+        "comments": [],
+        "files": [
+            {
+                "name": "(입찰공고문)국제물류진흥지역 기본계획 수립 연구.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01781035&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=03"
+            },
+            {
+                "name": "(입찰공고문)국제물류진흥지역 기본계획 수립 연구.hwpx",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01781035&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=03"
+            },
+            {
+                "name": "(제안요청서)국제물류진흥지역 기본계획 수립 연구.hwpx",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01781035&bidPbancOrd=000&fileType=&fileSeq=3&prcmBsneSeCd=03"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_002",
+        "ntceKindNm": "본공고",
+        "ntceNm": "2026년 인공지능(AI) 교과 도서 개발 인정도서 발행기관 운영 사업",
+        "organ": "충남대학교 산학협력단",
+        "price": 629090909.0,
+        "dateNotice": "2026-10-23 09:05",
+        "dateBrief": "-",
+        "dateLimit": "2026-11-03 10:00",
+        "dateOpen": "2026-11-03 11:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01785714&bidPbancOrd=000",
+        "comments": [],
+        "files": [
+            {
+                "name": "2-2.2026년 인공지능(AI) 교과 도서 개발 인정도서 발행기관 운영 사업  과업지시서(261022)_수정.hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01785714&bidPbancOrd=000&fileType=&fileSeq=3&prcmBsneSeCd=03"
+            },
+            {
+                "name": "2-1.2026년 인공지능(AI) 교과 도서 개발 인정도서 발행기관 운영 사업 제안요청서_수정본3(1022).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01785714&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=03"
+            },
+            {
+                "name": "1.공고문.hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01785714&bidPbancOrd=000&fileType=&fileSeq=3&prcmBsneSeCd=03"
+            },
+            {
+                "name": "1.공고문.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01785714&bidPbancOrd=000&fileType=&fileSeq=4&prcmBsneSeCd=03"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_003",
+        "ntceKindNm": "본공고",
+        "ntceNm": "제4차 민군기술협력사업 기본계획 수립을 위한 정책기획 및 성과분석",
+        "organ": "국방과학연구소",
+        "price": 266272727.0,
+        "dateNotice": "2026-10-23 09:31",
+        "dateBrief": "-",
+        "dateLimit": "2026-11-12 10:00",
+        "dateOpen": "2026-11-19 11:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01786694&bidPbancOrd=000",
+        "comments": [],
+        "files": [
+            {
+                "name": "1. 입찰공고문(제4차 민군기술협력사업 기본계획 수립을 위한 정책기획 및 성과분석).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786694&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=03"
+            },
+            {
+                "name": "1. 입찰공고문(제4차 민군기술협력사업 기본계획 수립을 위한 정책기획 및 성과분석).pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786694&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=03"
+            },
+            {
+                "name": "2. 제안요청서(제4차 민군기술협력사업 기본계획 수립을 위한 정책기획 및 성과분석).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786694&bidPbancOrd=000&fileType=&fileSeq=3&prcmBsneSeCd=03"
+            },
+            {
+                "name": "3. 계약특수조건(제4차 민군기술협력사업 기본계획 수립을 위한 정책기획 및 성과분석).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786694&bidPbancOrd=000&fileType=&fileSeq=4&prcmBsneSeCd=03"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_004",
+        "ntceKindNm": "본공고",
+        "ntceNm": " 제4차 민군기술협력사업 기본계획 수립을 위한 민군기술협력분야 기술조사분석",
+        "organ": "국방과학연구소",
+        "price": 177454545.0,
+        "dateNotice": "2026-10-23 09:33",
+        "dateBrief": "-",
+        "dateLimit": "2026-11-12 10:00",
+        "dateOpen": "2026-11-19 11:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01786843&bidPbancOrd=000",
+        "comments": [],
+        "files": [
+            {
+                "name": "1. 입찰공고문(제4차 민군기술협력사업 기본계획 수립을 위한 민군기술협력분야 기술조사분석).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786843&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=03"
+            },
+            {
+                "name": "1. 입찰공고문(제4차 민군기술협력사업 기본계획 수립을 위한 민군기술협력분야 기술조사분석).pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786843&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=03"
+            },
+            {
+                "name": "2. 제안요청서(제4차 민군기술협력사업 기본계획 수립을 위한 민군기술협력분야 기술조사분석).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786843&bidPbancOrd=000&fileType=&fileSeq=3&prcmBsneSeCd=03"
+            },
+            {
+                "name": "3. 계약특수조건(제4차 민군기술협력사업 기본계획 수립을 위한 민군기술협력분야 기술조사분석).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01786843&bidPbancOrd=000&fileType=&fileSeq=4&prcmBsneSeCd=03"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_005",
+        "ntceKindNm": "본공고",
+        "ntceNm": "양산시 공공임대형 지식산업센터 건립 소방공사(총괄)",
+        "organ": "경상남도 양산시",
+        "price": 1435550000.0,
+        "dateNotice": "2026-10-23 09:42",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-27 10:00",
+        "dateOpen": "2026-10-27 11:00",
+        "chgRsn": "[취소공고] 양산시 공공임대형 지식산업센터 건립 소방공사(총괄)",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01778675&bidPbancOrd=001",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01778675&bidPbancOrd=001"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_006",
         "ntceKindNm": "발주계획",
         "ntceNm": "2027~2028년 이러닝 교육 위탁운영 및 콘텐츠 개발",
         "organ": "새마을금고중앙회",
@@ -18,7 +177,7 @@
         "files": []
     },
     {
-        "id": "AUTO_002",
+        "id": "AUTO_007",
         "ntceKindNm": "발주계획",
         "ntceNm": "경복궁 국가유산 문화상품관 조성 설계공모",
         "organ": "국가유산진흥원",
@@ -36,7 +195,7 @@
         "files": []
     },
     {
-        "id": "AUTO_003",
+        "id": "AUTO_008",
         "ntceKindNm": "발주계획",
         "ntceNm": "MG인재개발원 구내식당 위탁운영",
         "organ": "새마을금고중앙회",
@@ -54,7 +213,7 @@
         "files": []
     },
     {
-        "id": "AUTO_004",
+        "id": "AUTO_009",
         "ntceKindNm": "발주계획",
         "ntceNm": "구천동천 하천기본계획 재수립 및 하천시설관리대장 작성 용역",
         "organ": "전북특별자치도 무주군",
@@ -72,7 +231,7 @@
         "files": []
     },
     {
-        "id": "AUTO_005",
+        "id": "AUTO_010",
         "ntceKindNm": "발주계획",
         "ntceNm": "주차장 의무설치에 따른 태양광 발전 타당성 조사 및 기본설계 용역",
         "organ": "부산교통공사",
@@ -90,7 +249,7 @@
         "files": []
     },
     {
-        "id": "AUTO_006",
+        "id": "AUTO_011",
         "ntceKindNm": "발주계획",
         "ntceNm": "2028년 제109회 전국체육대회 경기장 정비공사(건축‧토목‧기계설비‧조경) 실시설계용역",
         "organ": "전남광주통합특별시 광주청사",
@@ -108,7 +267,7 @@
         "files": []
     },
     {
-        "id": "AUTO_007",
+        "id": "AUTO_012",
         "ntceKindNm": "발주계획",
         "ntceNm": "응봉빗물펌프장 시설용량증대 타당성 조사 용역",
         "organ": "서울특별시 성동구",
@@ -126,7 +285,7 @@
         "files": []
     },
     {
-        "id": "AUTO_008",
+        "id": "AUTO_013",
         "ntceKindNm": "발주계획",
         "ntceNm": "덕남정수장 노후시설 개량공사 기본 및 실시설계 용역",
         "organ": "전남광주통합특별시 상수도사업본부",
@@ -144,7 +303,7 @@
         "files": []
     },
     {
-        "id": "AUTO_009",
+        "id": "AUTO_014",
         "ntceKindNm": "발주계획",
         "ntceNm": "봉화 골프연습장 건립사업 건설사업관리 용역",
         "organ": "경상북도 봉화군 체육시설사업소",
@@ -162,7 +321,7 @@
         "files": []
     },
     {
-        "id": "AUTO_010",
+        "id": "AUTO_015",
         "ntceKindNm": "발주계획",
         "ntceNm": "영천 은퇴자마을 조성사업 기본계획 및 타당성조사용역",
         "organ": "경상북도 영천시",
@@ -180,7 +339,7 @@
         "files": []
     },
     {
-        "id": "AUTO_011",
+        "id": "AUTO_016",
         "ntceKindNm": "발주계획",
         "ntceNm": "관내 도로개선 타당성 조사 용역(긴급)",
         "organ": "서울특별시 강동구",
@@ -198,7 +357,79 @@
         "files": []
     },
     {
-        "id": "AUTO_012",
+        "id": "AUTO_017",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "제천시 한수면 기초생활거점조성사업 기본계획수립용역",
+        "organ": "한국농어촌공사 충북지역본부",
+        "price": 223300000.0,
+        "dateNotice": "2026-10-28 11:20",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20909925",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_018",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "대월면 기초생활거점조성사업 2단계(S/W) 기본계획 수립 용역",
+        "organ": "한국농어촌공사 경기지역본부",
+        "price": 95700000.0,
+        "dateNotice": "2026-10-26 14:41",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20907355",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_019",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "대구 사회연대경제 기본계획 수립 용역",
+        "organ": "대구광역시",
+        "price": 97473000.0,
+        "dateNotice": "2026-10-26 10:14",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20906845",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_020",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "2026년 3차 출자출연 타당성 검토 외부연구진 참여 공고",
+        "organ": "한국지방행정연구원",
+        "price": 75000000.0,
+        "dateNotice": "2026-10-28 10:14",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20909787",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_021",
         "ntceKindNm": "발주계획",
         "ntceNm": "광석지구 다목적농촌용수개발사업 전기공사",
         "organ": "한국농어촌공사 충남지역본부 논산지사",
@@ -216,7 +447,7 @@
         "files": []
     },
     {
-        "id": "AUTO_013",
+        "id": "AUTO_022",
         "ntceKindNm": "발주계획",
         "ntceNm": "재송2동 복합청사 건립사업(건축,토목,가시설,조경)",
         "organ": "부산광역시 해운대구",
@@ -234,7 +465,7 @@
         "files": []
     },
     {
-        "id": "AUTO_014",
+        "id": "AUTO_023",
         "ntceKindNm": "발주계획",
         "ntceNm": " 영동군 설계 외 3개소 하수관로정비사업(전기 및 계측제어)",
         "organ": "충청북도 영동군",
@@ -252,7 +483,7 @@
         "files": []
     },
     {
-        "id": "AUTO_015",
+        "id": "AUTO_024",
         "ntceKindNm": "발주계획",
         "ntceNm": "거창 공공산후조리원 및 행복맘센터 건립사업 소방공사",
         "organ": "경상남도 거창군",
@@ -270,7 +501,7 @@
         "files": []
     },
     {
-        "id": "AUTO_016",
+        "id": "AUTO_025",
         "ntceKindNm": "발주계획",
         "ntceNm": "(가칭)경기안산1교 신축공사",
         "organ": "경기도교육청",
@@ -288,7 +519,7 @@
         "files": []
     },
     {
-        "id": "AUTO_017",
+        "id": "AUTO_026",
         "ntceKindNm": "발주계획",
         "ntceNm": "거창 공공산후조리원 및 행복맘센터 건립사업 기계설비공사",
         "organ": "경상남도 거창군",
@@ -306,7 +537,7 @@
         "files": []
     },
     {
-        "id": "AUTO_018",
+        "id": "AUTO_027",
         "ntceKindNm": "발주계획",
         "ntceNm": "거창 공공산후조리원 및 행복맘센터 건립사업 전기공사",
         "organ": "경상남도 거창군",
@@ -324,7 +555,151 @@
         "files": []
     },
     {
-        "id": "AUTO_019",
+        "id": "AUTO_028",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "농업근로자기숙사건립사업(건축)",
+        "organ": "충청북도 충주시",
+        "price": 1745404490.0,
+        "dateNotice": "2026-10-23 10:24",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20905439",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_029",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "사천시 공공산후조리원 건립사업(건축)",
+        "organ": "경상남도 사천시",
+        "price": 6514328000.0,
+        "dateNotice": "2026-10-29 16:03",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20912011",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_030",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "[긴급]이리초 식생활관 신축공사",
+        "organ": "전북특별자치도교육청 전북특별자치도익산교육지원청",
+        "price": 1627785000.0,
+        "dateNotice": "2026-10-29 14:38",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20911787",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_031",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "일직동 자경마을 어르신 행복센터 건립공사(건축+기계)",
+        "organ": "경기도 광명시",
+        "price": 1071882850.0,
+        "dateNotice": "2026-10-23 09:39",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20905333",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_032",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "태백 통합공공임대주택 건립사업(전기)",
+        "organ": "강원특별자치도 태백시",
+        "price": 3167641000.0,
+        "dateNotice": "2026-10-29 13:26",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20911605",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_033",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "고용서비스 역량강화센터 건립 통신공사",
+        "organ": "한국기술교육대학교",
+        "price": 1632520600.0,
+        "dateNotice": "2026-10-23 16:43",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20906202",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_034",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "인천항 내항 1·8부두 재개발사업 통신공사",
+        "organ": "인천항만공사",
+        "price": 4290400000.0,
+        "dateNotice": "2026-10-28 09:22",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20909688",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_035",
+        "ntceKindNm": "발주계획",
+        "ntceNm": "정병산 경로당 건립공사(건축)",
+        "organ": "경상남도 창원시",
+        "price": 551680000.0,
+        "dateNotice": "2026-10-28 20:51",
+        "dateBrief": "-",
+        "dateLimit": "-",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "https://www.g2b.go.kr/link/PRPA015_01/single/?oderPlanNo=R26DD20910995",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_036",
         "ntceKindNm": "사전규격",
         "ntceNm": "남산공원 시민친화공간 조성 기본계획 용역(총괄 및 1차분)",
         "organ": "전남광주통합특별시 나주시",
@@ -347,7 +722,7 @@
         ]
     },
     {
-        "id": "AUTO_020",
+        "id": "AUTO_037",
         "ntceKindNm": "사전규격",
         "ntceNm": "구천동천 하천기본계획 재수립 및 하천시설관리대장 작성 용역",
         "organ": "전북특별자치도 무주군",
@@ -374,7 +749,7 @@
         ]
     },
     {
-        "id": "AUTO_021",
+        "id": "AUTO_038",
         "ntceKindNm": "사전규격",
         "ntceNm": "인천항 내항 1·8부두 재개발사업 전기공사 책임감리용역",
         "organ": "인천항만공사",
@@ -401,7 +776,7 @@
         ]
     },
     {
-        "id": "AUTO_022",
+        "id": "AUTO_039",
         "ntceKindNm": "사전규격",
         "ntceNm": "해양바이오 소재 대량생산 플랜트 건립사업 설계 제안공모",
         "organ": "충청남도 서천군",
@@ -428,7 +803,7 @@
         ]
     },
     {
-        "id": "AUTO_023",
+        "id": "AUTO_040",
         "ntceKindNm": "사전규격",
         "ntceNm": "봉화 골프연습장 건립사업 건설사업관리 용역",
         "organ": "경상북도 봉화군 체육시설사업소",
@@ -459,7 +834,271 @@
         ]
     },
     {
-        "id": "AUTO_024",
+        "id": "AUTO_041",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "(긴급)탑골로 도로구조개선, 호암로 지하차도신설 기본 및 실시설계용역",
+        "organ": "서울특별시 금천구",
+        "price": 566170000.0,
+        "dateNotice": "2026-10-23 15:59",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-26 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289695&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289695&fileType=BFDTL&fileSeq=2"
+            },
+            {
+                "name": "첨부문서_3",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289695&fileType=BFDTL&fileSeq=4"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_042",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "밀양시 농촌 체류형 복합단지 조성사업 기본계획 수립용역(협상에의한계약)(긴급)",
+        "organ": "경상남도 밀양시",
+        "price": 100000000.0,
+        "dateNotice": "2026-10-23 16:05",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-26 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289710&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289710&fileType=BFDTL&fileSeq=2"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_043",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "진해선 여객 운행 재개 사전타당성조사 용역 ",
+        "organ": "조달청 경남지방조달청",
+        "price": 202013000.0,
+        "dateNotice": "2026-10-23 16:43",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-28 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289772&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289772&fileType=BFDTL&fileSeq=2"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_044",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "안동시 사용종료매립장(노하동, 수상동) 사후관리 종료를 위한 타당성 및 안정화조사 용역",
+        "organ": "경상북도 안동시",
+        "price": 121500000.0,
+        "dateNotice": "2026-10-23 18:07",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-28 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289843&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289843&fileType=BFDTL&fileSeq=2"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_045",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "경복궁 국가유산 문화상품관 조성 설계공모",
+        "organ": "국가유산진흥원",
+        "price": 703329000.0,
+        "dateNotice": "2026-10-23 18:21",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-28 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289849&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289849&fileType=BFDTL&fileSeq=2"
+            },
+            {
+                "name": "첨부문서_3",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289849&fileType=BFDTL&fileSeq=3"
+            },
+            {
+                "name": "첨부문서_4",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289849&fileType=BFDTL&fileSeq=4"
+            },
+            {
+                "name": "첨부문서_5",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289849&fileType=BFDTL&fileSeq=5"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_046",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "전남대후문 상권활성화 기본계획 수립 및 연구 용역",
+        "organ": "전남광주통합특별시 북구",
+        "price": 50000000.0,
+        "dateNotice": "2026-10-23 21:31",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-28 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289885&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289885&fileType=BFDTL&fileSeq=2"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_047",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "2026년도 신축매입약정 설계검토 용역",
+        "organ": "한국토지주택공사",
+        "price": 3845950000.0,
+        "dateNotice": "2026-10-23 23:40",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-25 21:25",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_048",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "남부내륙철도 터널기계설비 제5공구 실시설계",
+        "organ": "국가철도공단",
+        "price": 896000000.0,
+        "dateNotice": "2026-10-23 23:51",
+        "dateBrief": "-",
+        "dateLimit": "2026-10-30 18:00",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": []
+    },
+    {
+        "id": "AUTO_049",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "전남개발공사 2027년도 SLA기반 정보시스템 통합 유지관리 용역",
+        "organ": "조달청 광주지방조달청",
+        "price": 531658990.0,
+        "dateNotice": "2026-10-24 09:40",
+        "dateBrief": "-",
+        "dateLimit": "2026-11-01 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00289913&fileType=BFDTL&fileSeq=1"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_050",
+        "ntceKindNm": "사전규격",
+        "ntceNm": "대구 사회연대경제 기본계획 수립 용역",
+        "organ": "대구광역시",
+        "price": 97473000.0,
+        "dateNotice": "2026-10-26 10:18",
+        "dateBrief": "-",
+        "dateLimit": "2026-11-03 23:59",
+        "dateOpen": "-",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "첨부문서_1",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00290056&fileType=BFDTL&fileSeq=1"
+            },
+            {
+                "name": "첨부문서_2",
+                "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00290056&fileType=BFDTL&fileSeq=2"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_051",
         "ntceKindNm": "사전규격",
         "ntceNm": "[학교법인 성심학원] 소유 한옥 리모델링 설계 및 시공 일괄 공사 업체 선정",
         "organ": "영산대학교",
@@ -494,7 +1133,7 @@
         ]
     },
     {
-        "id": "AUTO_025",
+        "id": "AUTO_052",
         "ntceKindNm": "사전규격",
         "ntceNm": "수소상용차용 액화수소 전주기 지원센터 건축, 토목, 기계설비 신축 공사",
         "organ": "한국자동차연구원",
@@ -533,7 +1172,7 @@
         ]
     },
     {
-        "id": "AUTO_026",
+        "id": "AUTO_053",
         "ntceKindNm": "사전규격",
         "ntceNm": "충북 소방교육대 건립사업",
         "organ": "충북개발공사",
@@ -560,12 +1199,12 @@
         ]
     },
     {
-        "id": "AUTO_027",
+        "id": "AUTO_054",
         "ntceKindNm": "민간입찰",
         "ntceNm": "(정비사업)포동1구역 재개발정비사업 조합설립추진위원회 설계자 선정 입찰공고",
         "organ": "포동1구역 재개발정비사업 조합설립추진위원회",
         "price": 0,
-        "dateNotice": "2026-10-28 12:40",
+        "dateNotice": "-",
         "dateBrief": "2026-11-05 14:00",
         "dateLimit": "2026-11-13 11:00",
         "dateOpen": "2026-11-13 12:00",
@@ -587,12 +1226,12 @@
         ]
     },
     {
-        "id": "AUTO_028",
+        "id": "AUTO_055",
         "ntceKindNm": "민간입찰",
         "ntceNm": "(정비사업)설계자 선정 입찰공고",
         "organ": "동구릉 역세권 도심복합개발 운영위원회",
         "price": 0,
-        "dateNotice": "2026-10-30 14:39",
+        "dateNotice": "-",
         "dateBrief": "-",
         "dateLimit": "2026-11-06 15:00",
         "dateOpen": "2026-11-06 16:00",
@@ -618,12 +1257,12 @@
         ]
     },
     {
-        "id": "AUTO_029",
+        "id": "AUTO_056",
         "ntceKindNm": "민간입찰",
         "ntceNm": "(정비사업)만수2구역 재개발정비사업 설계자 선정 입찰 공고",
         "organ": "만수2구역 재개발사업 조합설립추진위원회",
         "price": 0,
-        "dateNotice": "2026-10-23 10:20",
+        "dateNotice": "-",
         "dateBrief": "-",
         "dateLimit": "2026-11-02 14:30",
         "dateOpen": "2026-11-02 15:30",
@@ -645,12 +1284,12 @@
         ]
     },
     {
-        "id": "AUTO_030",
+        "id": "AUTO_057",
         "ntceKindNm": "민간입찰",
         "ntceNm": "(정비사업)설계자 선정 입찰공고",
         "organ": "수영2구역재개발정비사업조합설립추진위원회",
         "price": 0,
-        "dateNotice": "2026-10-28 11:47",
+        "dateNotice": "-",
         "dateBrief": "2026-11-04 16:00",
         "dateLimit": "2026-11-12 14:00",
         "dateOpen": "2026-11-12 15:00",
@@ -664,6 +1303,191 @@
             {
                 "name": "수영2구역 설계자 입찰지침서.pdf",
                 "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01791122&bidPbancOrd=001&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_058",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)설계자 선정 입찰공고",
+        "organ": "수영2구역재개발정비사업조합설립추진위원회",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-11-04 16:00",
+        "dateLimit": "2026-11-12 14:00",
+        "dateOpen": "2026-11-12 15:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "수영2구역 설계자 입찰지침서.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01791122&bidPbancOrd=002&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_059",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)상계보람아파트 재건축정비사업 설계자 선정 입찰공고",
+        "organ": "상계보람아파트재건축정비사업조합설립추진위",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-11-05 13:00",
+        "dateLimit": "2026-11-17 16:00",
+        "dateOpen": "2026-11-17 17:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "상계보람아파트 재건축정비사업 설계자 선정 입찰공고문.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01793995&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            },
+            {
+                "name": "상계보람아파트 재건축정비사업 설계자 선정 입찰지침서.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01793995&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_060",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)설계자 선정 입찰 공고",
+        "organ": "반포미도2차아파트 재건축정비사업 조합설립추진위원회",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-11-09 14:00",
+        "dateLimit": "2026-11-13 15:00",
+        "dateOpen": "2026-11-13 16:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "설계자 선정 입찰 공고.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01800860&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            },
+            {
+                "name": "설계자선정을위한입찰지침서.hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01800860&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_061",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)대치선경아파트 설계자 선정 입찰공고",
+        "organ": "대치선경아파트 재건축사업 조합설립추진위원회",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-10-06 15:00",
+        "dateLimit": "2026-10-27 16:00",
+        "dateOpen": "2026-10-27 17:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "대치선경 설계자 선정 입찰지침서.hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01744256&bidPbancOrd=002&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            },
+            {
+                "name": "대치선경 설계자 선정 입찰공고문.hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01744256&bidPbancOrd=002&fileType=&fileSeq=2&prcmBsneSeCd=22"
+            },
+            {
+                "name": "대치선경 설계자 선정 입찰공고문.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01744256&bidPbancOrd=002&fileType=&fileSeq=3&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_062",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)설계자 선정 입찰공고",
+        "organ": "수영2구역재개발정비사업조합설립추진위원회",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-11-04 16:00",
+        "dateLimit": "2026-11-12 14:00",
+        "dateOpen": "2026-11-12 15:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "설계자 선정 입찰공고.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01791122&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_063",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)수유동2-5구역 가로주택정비사업 조합 설계자 선정 입찰공고",
+        "organ": "수유동2의5구역 가로주택정비사업조합",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-11-05 13:00",
+        "dateLimit": "2026-11-16 10:00",
+        "dateOpen": "2026-11-16 11:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "설계 공고.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01798059&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            },
+            {
+                "name": "설계 지침.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01798059&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=22"
+            }
+        ]
+    },
+    {
+        "id": "AUTO_064",
+        "ntceKindNm": "민간입찰",
+        "ntceNm": "(정비사업)구산역세권(역촌동) 장기전세주택 도시정비형재개발사업 설계자 선정 입찰 공고",
+        "organ": "구산역세권(역촌동)장기전세주택 도시정비형 재개발사업 조합설립추진위원회",
+        "price": 0,
+        "dateNotice": "-",
+        "dateBrief": "2026-11-05 14:00",
+        "dateLimit": "2026-11-17 14:00",
+        "dateOpen": "2026-11-17 15:00",
+        "chgRsn": "",
+        "isImportant": false,
+        "isHidden": false,
+        "isChecked": false,
+        "url": "",
+        "comments": [],
+        "files": [
+            {
+                "name": "설계자 선정 입찰공고문.pdf",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01792956&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=22"
+            },
+            {
+                "name": "설계자 선정 입찰지침서(적격심사 배점표 포함).hwp",
+                "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01792956&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=22"
             }
         ]
     }
