@@ -2,236 +2,211 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 입찰·정비사업 모니터링 대시보드</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>나라장터 맞춤 신규 알림 대시보드 (알리미2)</title>
     <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        body { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { font-size: 24px; margin-bottom: 20px; color: #1a73e8; }
+        
+        /* 탭 메뉴 */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .tab-btn { padding: 10px 20px; font-size: 15px; font-weight: bold; border: none; background: #e0e0e0; cursor: pointer; border-radius: 4px; }
+        .tab-btn.active { background: #1a73e8; color: white; }
+        
+        /* 검색 및 컨트롤 영역 */
+        .controls { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+        .search-box { padding: 8px 12px; width: 300px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* 2열 그리드 레이아웃 */
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .grid-container { grid-template-columns: 1fr; } }
+        
+        /* 카드 디자인 */
+        .card { background: white; border: 1px solid #dcdcdc; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .card.checked { background-color: #f9f9f9; opacity: 0.7; border-color: #bbb; }
+        .card.important { border-left: 5px solid #ff4d4f; }
+        
+        /* 카드 헤더 및 타이틀 (링크 아님) */
+        .card-title { font-size: 15px; font-weight: bold; color: #1a73e8; margin-bottom: 12px; line-height: 1.4; }
+        
+        /* 카드 내부 섹션 */
+        .section-title { font-weight: bold; font-size: 13px; margin-top: 10px; margin-bottom: 4px; color: #222; }
+        .info-list { font-size: 13px; line-height: 1.6; margin: 0 0 10px 0; padding-left: 15px; }
+        
+        /* 첨부파일 및 바로가기 */
+        .files-box, .url-box { font-size: 13px; margin-top: 8px; }
+        .files-box a, .url-box a { color: #0066cc; text-decoration: none; }
+        .files-box a:hover, .url-box a:hover { text-decoration: underline; }
+        
+        /* 하단 컨트롤 (체크박스, 중요표시 등) */
+        .card-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        
+        .admin-panel { margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ccc; display: none; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
+<body>
 
-    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-blue-600 p-2.5 rounded-xl shadow">
-                    <i class="fa-solid fa-building-user text-xl text-white"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-xl tracking-tight">스마트 입찰·정비사업 모니터링</h1>
-                    <p class="text-xs text-slate-400">G2B 나라장터 실시간 대시보드</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <button onclick="loadNotices()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium rounded-lg border border-slate-700 transition flex items-center gap-2">
-                    <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i> 새로고침
-                </button>
-                <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex items-center text-xs">
-                    <button id="btn-user-mode" onclick="requestAuth(false)" class="px-3 py-1.5 rounded-md font-medium transition text-white bg-blue-600">
-                        <i class="fa-solid fa-user"></i> 사용자
-                    </button>
-                    <button id="btn-admin-mode" onclick="requestAuth(true)" class="px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white">
-                        <i class="fa-solid fa-user-gear"></i> 관리자
-                    </button>
-                </div>
-            </div>
+<div class="container">
+    <h1>[나라장터] 맞춤 신규 알림 대시보드 (알리미2)</h1>
+    
+    <div class="controls">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('본공고')">본공고</button>
+            <button class="tab-btn" onclick="switchTab('사전규격')">사전규격</button>
+            <button class="tab-btn" onclick="switchTab('발주계획')">발주계획</button>
+            <button class="tab-btn" onclick="switchTab('민간입찰')">민간입찰(정비사업)</button>
         </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 pt-6 space-y-6">
-        <div id="status-bar" class="hidden bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl flex justify-between items-center text-sm shadow-sm">
-            <span id="status-msg"><i class="fa-solid fa-circle-info mr-2"></i>데이터를 불러오는 중입니다...</span>
-            <button onclick="document.getElementById('status-bar').classList.add('hidden')" class="text-blue-400 hover:text-blue-600">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+        <div>
+            <input type="text" id="searchInput" class="search-box" placeholder="공고명 또는 기관명 검색..." oninput="renderCards()">
+            <button onclick="toggleAdminMode()" style="padding: 8px 15px; cursor: pointer;">관리자 모드</button>
         </div>
+    </div>
 
-        <!-- 탭 및 검색 바 -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex flex-wrap gap-2">
-                <button onclick="filterType('ALL')" id="tab-ALL" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm">전체</button>
-                <button onclick="filterType('본공고')" id="tab-본공고" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">본공고</button>
-                <button onclick="filterType('사전규격')" id="tab-사전규격" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">사전규격</button>
-                <button onclick="filterType('발주계획')" id="tab-발주계획" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">발주계획</button>
-            </div>
-            <div class="relative flex-1 max-w-md">
-                <input type="text" id="search-input" onkeyup="renderDashboard()" placeholder="공고명, 기관명 검색..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
-            </div>
-        </div>
+    <div id="adminPanel" class="admin-panel">
+        <strong>관리자 설정:</strong> <span id="adminStatus">비활성 상태</span>
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 space-y-4">
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                        <span>공고 목록</span>
-                        <span id="notice-count" class="bg-blue-100 text-blue-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">0</span>
-                    </h2>
-                    <span id="admin-notice-info" class="text-xs text-amber-600 hidden font-medium">관리자 모드 (숨김 포함)</span>
-                </div>
-                <div id="notice-list" class="space-y-3"></div>
-            </div>
+    <!-- 2열 그리드 컨테이너 -->
+    <div id="cardGrid" class="grid-container"></div>
+</div>
 
-            <div class="space-y-6">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-regular fa-calendar-days text-blue-600 mr-1"></i> 마감 달력</h3>
-                        <span id="calendar-month" class="text-xs font-semibold text-slate-600"></span>
-                    </div>
-                    <div class="grid grid-cols-7 text-center text-xs font-semibold text-slate-400 mb-2">
-                        <div class="text-red-500">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-500">토</div>
-                    </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 text-center text-xs gap-1"></div>
-                </div>
-            </div>
-        </div>
-    </main>
+<script>
+    let allData = [];
+    let currentTab = '본공고';
 
-    <script>
-        let allNotices = [];
-        let currentTypeFilter = 'ALL';
-        let isAdmin = false;
+    async function loadData() {
+        try {
+            const res = await fetch('notices.json?t=' + new Date().getTime());
+            if (!res.ok) throw new Error('데이터 로드 실패');
+            allData = await res.json();
+            renderCards();
+        } catch (e) {
+            document.getElementById('cardGrid').innerHTML = '<p>데이터를 불러오는 중이거나 수집된 공고가 없습니다. 잠시 후 다시 확인해주세요.</p>';
+        }
+    }
 
-        const USER_PASSWORD = "user1234";   // 사용자 비밀번호
-        const ADMIN_PASSWORD = "admin5678"; // 관리자 비밀번호
+    function switchTab(tabName) {
+        currentTab = tabName;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.includes(tabName));
+        });
+        renderCards();
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadNotices();
+    function renderCards() {
+        const grid = document.getElementById('cardGrid');
+        const keyword = document.getElementById('searchInput').value.toLowerCase();
+        grid.innerHTML = '';
+
+        const filtered = allData.filter(item => {
+            const matchTab = item.ntceKindNm === currentTab;
+            const matchSearch = (item.ntceNm || '').toLowerCase().includes(keyword) || (item.organ || '').toLowerCase().includes(keyword);
+            const notHidden = !item.isHidden;
+            return matchTab && matchSearch && notHidden;
         });
 
-        function requestAuth(toAdmin) {
-            const pass = prompt(toAdmin ? "관리자 비밀번호를 입력하세요." : "사용자 비밀번호를 입력하세요.", "");
-            if (toAdmin && pass !== ADMIN_PASSWORD) { alert("비밀번호가 틀렸습니다."); return; }
-            if (!toAdmin && pass !== USER_PASSWORD) { alert("비밀번호가 틀렸습니다."); return; }
-            isAdmin = toAdmin;
-            document.getElementById('btn-user-mode').className = isAdmin ? "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white" : "px-3 py-1.5 rounded-md font-medium transition text-white bg-blue-600";
-            document.getElementById('btn-admin-mode').className = isAdmin ? "px-3 py-1.5 rounded-md font-medium transition text-white bg-amber-600" : "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white";
-            document.getElementById('admin-notice-info').classList.toggle('hidden', !isAdmin);
-            renderDashboard();
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #777; padding: 40px;">조회된 공고가 없습니다.</p>';
+            return;
         }
 
-        async function loadNotices() {
-            try {
-                const res = await fetch(`notices.json?t=${new Date().getTime()}`);
-                if (!res.ok) throw new Error();
-                allNotices = await res.json();
-                
-                const localState = JSON.parse(localStorage.getItem('notice_local_state') || '{}');
-                allNotices.forEach(n => {
-                    if (localState[n.id]) {
-                        if (localState[n.id].isHidden !== undefined) n.isHidden = localState[n.id].isHidden;
-                        if (localState[n.id].isImportant !== undefined) n.isImportant = localState[n.id].isImportant;
-                        if (localState[n.id].isChecked !== undefined) n.isChecked = localState[n.id].isChecked;
-                    }
-                });
-                showStatus("✅ 데이터를 불러왔습니다.");
-            } catch (e) {
-                showStatus("⚠️ notices.json 파일이 없습니다. 액션을 실행해 주세요.", "warning");
-                allNotices = [];
-            } finally {
-                renderDashboard();
-            }
-        }
-
-        function renderDashboard() {
-            const keyword = document.getElementById('search-input').value.trim().toLowerCase();
-            const listEl = document.getElementById('notice-list');
-            listEl.innerHTML = '';
-
-            const filtered = allNotices.filter(item => {
-                if (!isAdmin && item.isHidden) return false;
-                if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) return false;
-                if (keyword && !(item.ntceNm || '').toLowerCase().includes(keyword) && !(item.organ || '').toLowerCase().includes(keyword)) return false;
-                return true;
-            });
-
-            document.getElementById('notice-count').innerText = filtered.length;
-
-            if (filtered.length === 0) {
-                listEl.innerHTML = `<div class="bg-white p-12 text-center rounded-xl border border-slate-200 text-slate-400">등록된 공고가 없습니다.</div>`;
-                return;
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = `card ${item.isChecked ? 'checked' : ''} ${item.isImportant ? 'important' : ''}`;
+            
+            // 1. 기관 정보 블록
+            let insttHtml = `• 발주처: ${item.organ || '-'}<br>`;
+            if (item.demandInstt && item.demandInstt !== '-') {
+                insttHtml += `• 수요처: ${item.demandInstt}<br>`;
             }
 
-            filtered.forEach(item => {
-                const isCheckedStyle = item.isChecked ? "bg-emerald-50/60 border-emerald-200" : "bg-white border-slate-200";
-                
-                listEl.innerHTML += `
-                    <div class="p-4 rounded-xl border ${isCheckedStyle} shadow-sm space-y-2">
-                        <div class="flex justify-between items-start gap-2">
-                            <div class="space-y-1">
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 bg-blue-50 text-blue-600 font-bold text-xs rounded">${item.ntceKindNm}</span>
-                                    <span class="text-xs text-slate-400">${item.organ}</span>
-                                </div>
-                                <h3 class="font-bold text-sm text-slate-800"><a href="${item.url}" target="_blank" class="hover:text-blue-600">${item.ntceNm}</a></h3>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="flex items-center gap-1 text-xs font-semibold cursor-pointer px-2 py-1 bg-white border rounded shadow-sm">
-                                    <input type="checkbox" ${item.isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="rounded text-blue-600">
-                                    <span>${item.isChecked ? '확인함' : '미확인'}</span>
-                                </label>
-                                ${isAdmin ? `<button onclick="toggleHide('${item.id}')" class="px-2 py-1 text-xs rounded bg-rose-100 text-rose-700">${item.isHidden ? '숨김해제' : '숨기기'}</button>` : ''}
-                            </div>
-                        </div>
-                        <div class="text-xs text-slate-500 flex gap-4 pt-1 border-t">
-                            <span>가격: ${item.price ? Number(item.price).toLocaleString() + '원' : '미지정'}</span>
-                            <span class="text-rose-600 font-bold">마감: ${item.dateLimit}</span>
-                        </div>
-                    </div>`;
-            });
-            renderCalendar(new Date(), filtered);
-        }
-
-        function toggleCheck(id) {
-            const n = allNotices.find(x => x.id === id);
-            if (n) {
-                n.isChecked = !n.isChecked;
-                saveState(id, { isChecked: n.isChecked });
-                renderDashboard();
+            // 2. 용역비 블록
+            let priceHtml = '';
+            if (item.price && item.price !== '0원' && item.price !== '미기재') {
+                priceHtml = `<div class="section-title">2. 용역비</div><ul class="info-list"><li>${item.price}</li></ul>`;
             }
-        }
 
-        function toggleHide(id) {
-            const n = allNotices.find(x => x.id === id);
-            if (n) {
-                n.isHidden = !n.isHidden;
-                saveState(id, { isHidden: n.isHidden });
-                renderDashboard();
+            // 3. 일정 정보 블록
+            let scheduleHtml = '';
+            if (currentTab === '발주계획') {
+                scheduleHtml = `• 계획공고: ${item.dateNotice || '-'}<br>• 발주시기: ${item.orderPeriod || '-'}`;
+            } else if (currentTab === '사전규격') {
+                scheduleHtml = `• 사전공고: ${item.dateNotice || '-'}<br>• 의견마감: ${item.opninCloseDt || item.dateLimit || '-'}`;
+            } else if (currentTab === '민간입찰') {
+                scheduleHtml = `• 공고일: ${item.dateNotice || '-'}<br>• 현설일: ${item.dateBrief || '-'}<br>• 마감일: ${item.dateLimit || '-'}<br>• 개찰일: ${item.dateOpen || '-'}`;
+            } else {
+                scheduleHtml = `• 공고일: ${item.dateNotice || '-'}<br>• 현설일: ${item.dateBrief || '-'}<br>• 등록일: ${item.dateReg || '-'}<br>• 제출일: ${item.dateLimit || '-'}<br>• 평가일: ${item.dateOpen || '-'}`;
             }
-        }
 
-        function saveState(id, state) {
-            const local = JSON.parse(localStorage.getItem('notice_local_state') || '{}');
-            local[id] = { ...local[id], ...state };
-            localStorage.setItem('notice_local_state', JSON.stringify(local));
-        }
-
-        function filterType(type) {
-            currentTypeFilter = type;
-            document.querySelectorAll('.tab-btn').forEach(b => b.className = "tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100");
-            document.getElementById(`tab-${type}`).className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm";
-            renderDashboard();
-        }
-
-        function renderCalendar(baseDate, notices = allNotices) {
-            const grid = document.getElementById('calendar-grid');
-            document.getElementById('calendar-month').innerText = `${baseDate.getFullYear()}년 ${baseDate.getMonth() + 1}월`;
-            grid.innerHTML = '';
-            const first = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1).getDay();
-            const last = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate();
-            for (let i = 0; i < first; i++) grid.innerHTML += `<div></div>`;
-            for (let d = 1; d <= last; d++) {
-                grid.innerHTML += `<div class="h-8 flex items-center justify-center border rounded text-slate-700">${d}</div>`;
+            // 4. 바로가기 링크
+            let urlHtml = '';
+            if (item.url) {
+                urlHtml = `<div class="url-box"><b>바로가기:</b> <a href="${item.url}" target="_blank">[나라장터 바로가기]</a></div>`;
             }
-        }
 
-        function showStatus(msg) {
-            document.getElementById('status-msg').innerText = msg;
-            document.getElementById('status-bar').classList.remove('hidden');
+            // 5. 첨부파일 목록
+            let filesHtml = '';
+            if (item.files && item.files.length > 0) {
+                let fList = item.files.map(f => `<li><a href="${f.url}" target="_blank">${f.name}</a></li>`).join('');
+                filesHtml = `<div class="section-title">첨부파일</div><ul class="info-list" style="list-style-type: disc;">${fList}</ul>`;
+            }
+
+            // 변경/취소 사유
+            let chgHtml = '';
+            if (item.chgRsn && item.chgRsn !== '-') {
+                chgHtml = `<div style="color: #d93025; font-weight: bold; font-size: 12px; margin-bottom: 5px;">* 변경/취소 사유: ${item.chgRsn}</div>`;
+            }
+
+            // 카드 구성 (제목 클릭 시 링크 이동 없음 - 단순 텍스트)
+            card.innerHTML = `
+                <div>
+                    <div class="card-title">${item.ntceNm}</div>
+                    ${chgHtml}
+                    <div class="section-title">1. 기관 정보</div>
+                    <ul class="info-list">${insttHtml}</ul>
+                    ${priceHtml}
+                    <div class="section-title">3. 일정 정보</div>
+                    <ul class="info-list">${scheduleHtml}</ul>
+                    ${urlHtml}
+                    ${filesHtml}
+                </div>
+                <div class="card-footer">
+                    <label>
+                        <input type="checkbox" ${item.isChecked ? 'checked' : ''} onclick="toggleCheck('${item.id}')"> 확인 완료
+                    </label>
+                    <button onclick="toggleImportant('${item.id}')" style="background:${item.isImportant ? '#ff4d4f' : '#f0f0f0'}; color:${item.isImportant ? '#fff' : '#333'}; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+                        ${item.isImportant ? '중요 취소' : '중요 지정'}
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function toggleCheck(id) {
+        const item = allData.find(d => d.id === id);
+        if (item) {
+            item.isChecked = !item.isChecked;
+            renderCards();
         }
-    </script>
+    }
+
+    function toggleImportant(id) {
+        const item = allData.find(d => d.id === id);
+        if (item) {
+            item.isImportant = !item.isImportant;
+            renderCards();
+        }
+    }
+
+    function toggleAdminMode() {
+        const panel = document.getElementById('adminPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('adminStatus').textContent = panel.style.display === 'block' ? '활성' : '비활성';
+    }
+
+    window.onload = loadData;
+</script>
+
 </body>
 </html>
