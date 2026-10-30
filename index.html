@@ -25,4 +25,193 @@
         /* 카드 디자인 (이전의 깔끔한 형태) */
         .card { background: white; border: 1px solid #e1e4e8; border-radius: 6px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; }
         .card.checked { background-color: #fafafa; opacity: 0.65; border-color: #dcdcdc; }
-        .card.important { border-left: 4px solid #ff4d
+        .card.important { border-left: 4px solid #ff4d4f; }
+        
+        /* 카드 타이틀 (링크 아님) */
+        .card-title { font-size: 15px; font-weight: bold; color: #1a73e8; margin-bottom: 10px; line-height: 1.4; }
+        
+        /* 섹션 및 리스트 스타일 */
+        .section-title { font-weight: bold; font-size: 13px; margin-top: 12px; margin-bottom: 4px; color: #222; }
+        .info-list { font-size: 13px; line-height: 1.6; margin: 0; padding-left: 15px; color: #444; }
+        
+        /* 바로가기 및 첨부파일 */
+        .url-box { font-size: 13px; margin-top: 10px; }
+        .url-box a { color: #1a73e8; text-decoration: none; font-weight: bold; }
+        .url-box a:hover { text-decoration: underline; }
+        
+        .files-box { font-size: 13px; margin-top: 8px; }
+        .files-box ul { padding-left: 15px; margin: 4px 0 0 0; }
+        .files-box a { color: #0066cc; text-decoration: none; }
+        .files-box a:hover { text-decoration: underline; }
+        
+        /* 카드 하단 푸터 */
+        .card-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        
+        .admin-panel { margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #ccc; display: none; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>[나라장터] 맞춤 신규 알림 대시보드 (알리미2)</h1>
+    
+    <div class="controls">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('전체')">전체 목록</button>
+            <button class="tab-btn" onclick="switchTab('본공고')">본공고</button>
+            <button class="tab-btn" onclick="switchTab('사전규격')">사전규격</button>
+            <button class="tab-btn" onclick="switchTab('발주계획')">발주계획</button>
+            <button class="tab-btn" onclick="switchTab('민간입찰')">민간입찰(정비사업)</button>
+        </div>
+        <div>
+            <input type="text" id="searchInput" class="search-box" placeholder="공고명 또는 기관명 검색..." oninput="renderCards()">
+            <button onclick="toggleAdminMode()" style="padding: 8px 14px; cursor: pointer; border: 1px solid #ccc; background: #fff; border-radius: 4px; font-size: 13px;">관리자 모드</button>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="admin-panel">
+        <strong>관리자 설정:</strong> <span id="adminStatus">비활성 상태</span>
+    </div>
+
+    <div id="cardGrid" class="grid-container"></div>
+</div>
+
+<script>
+    let allData = [];
+    let currentTab = '전체';
+
+    async function loadData() {
+        try {
+            const res = await fetch('notices.json?t=' + new Date().getTime());
+            if (!res.ok) throw new Error('데이터 로드 실패');
+            allData = await res.json();
+            renderCards();
+        } catch (e) {
+            document.getElementById('cardGrid').innerHTML = '<p style="grid-column: span 2; text-align: center; color: #777; padding: 40px;">데이터를 불러오는 중이거나 수집된 공고가 없습니다. Actions 실행 상태를 확인해주세요.</p>';
+        }
+    }
+
+    function switchTab(tabName) {
+        currentTab = tabName;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.includes(tabName));
+        });
+        renderCards();
+    }
+
+    function renderCards() {
+        const grid = document.getElementById('cardGrid');
+        const keyword = document.getElementById('searchInput').value.toLowerCase();
+        grid.innerHTML = '';
+
+        const filtered = allData.filter(item => {
+            const matchTab = (currentTab === '전체') || (item.ntceKindNm === currentTab);
+            const matchSearch = (item.ntceNm || '').toLowerCase().includes(keyword) || (item.organ || '').toLowerCase().includes(keyword);
+            const notHidden = !item.isHidden;
+            return matchTab && matchSearch && notHidden;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #777; padding: 40px;">조건에 일치하는 공고가 없습니다.</p>';
+            return;
+        }
+
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = `card ${item.isChecked ? 'checked' : ''} ${item.isImportant ? 'important' : ''}`;
+            
+            // 기관 정보
+            let insttHtml = `• 발주처: ${item.organ || '-'}<br>`;
+            if (item.demandInstt && item.demandInstt !== '-') {
+                insttHtml += `• 수요처: ${item.demandInstt}<br>`;
+            }
+
+            // 용역비
+            let priceHtml = '';
+            if (item.price && item.price !== '0원' && item.price !== '미기재') {
+                priceHtml = `<div class="section-title">2. 용역비</div><ul class="info-list"><li>${item.price}</li></ul>`;
+            }
+
+            // 일정 정보
+            let scheduleHtml = '';
+            if (item.ntceKindNm === '발주계획') {
+                scheduleHtml = `• 계획공고: ${item.dateNotice || '-'}<br>• 발주시기: ${item.orderPeriod || '-'}`;
+            } else if (item.ntceKindNm === '사전규격') {
+                scheduleHtml = `• 사전공고: ${item.dateNotice || '-'}<br>• 의견마감: ${item.opninCloseDt || item.dateLimit || '-'}`;
+            } else if (item.ntceKindNm === '민간입찰') {
+                scheduleHtml = `• 공고일: ${item.dateNotice || '-'}<br>• 현설일: ${item.dateBrief || '-'}<br>• 마감일: ${item.dateLimit || '-'}<br>• 개찰일: ${item.dateOpen || '-'}`;
+            } else {
+                scheduleHtml = `• 공고일: ${item.dateNotice || '-'}<br>• 현설일: ${item.dateBrief || '-'}<br>• 등록일: ${item.dateReg || '-'}<br>• 제출일: ${item.dateLimit || '-'}<br>• 평가일: ${item.dateOpen || '-'}`;
+            }
+
+            // 바로가기
+            let urlHtml = '';
+            if (item.url) {
+                urlHtml = `<div class="url-box"><b>4. 바로가기:</b> <a href="${item.url}" target="_blank">[나라장터 바로가기]</a></div>`;
+            }
+
+            // 첨부파일
+            let filesHtml = '';
+            if (item.files && item.files.length > 0) {
+                let fList = item.files.map(f => `<li><a href="${f.url}" target="_blank">${f.name}</a></li>`).join('');
+                filesHtml = `<div class="section-title">첨부파일</div><div class="files-box"><ul>${fList}</ul></div>`;
+            }
+
+            // 변경/취소 사유
+            let chgHtml = '';
+            if (item.chgRsn && item.chgRsn !== '-') {
+                chgHtml = `<div style="color: #d93025; font-weight: bold; font-size: 12px; margin-bottom: 6px;">* 변경/취소 사유: ${item.chgRsn}</div>`;
+            }
+
+            card.innerHTML = `
+                <div>
+                    <div class="card-title">[${item.ntceKindNm}] ${item.ntceNm}</div>
+                    ${chgHtml}
+                    <div class="section-title">1. 기관 정보</div>
+                    <ul class="info-list">${insttHtml}</ul>
+                    ${priceHtml}
+                    <div class="section-title">3. 일정 정보</div>
+                    <ul class="info-list">${scheduleHtml}</ul>
+                    ${urlHtml}
+                    ${filesHtml}
+                </div>
+                <div class="card-footer">
+                    <label style="cursor: pointer;">
+                        <input type="checkbox" ${item.isChecked ? 'checked' : ''} onclick="toggleCheck('${item.id}')"> 확인 완료
+                    </label>
+                    <button onclick="toggleImportant('${item.id}')" style="background:${item.isImportant ? '#ff4d4f' : '#f0f0f0'}; color:${item.isImportant ? '#fff' : '#333'}; border:none; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:12px;">
+                        ${item.isImportant ? '중요 취소' : '중요 지정'}
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function toggleCheck(id) {
+        const item = allData.find(d => d.id === id);
+        if (item) {
+            item.isChecked = !item.isChecked;
+            renderCards();
+        }
+    }
+
+    function toggleImportant(id) {
+        const item = allData.find(d => d.id === id);
+        if (item) {
+            item.isImportant = !item.isImportant;
+            renderCards();
+        }
+    }
+
+    function toggleAdminMode() {
+        const panel = document.getElementById('adminPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('adminStatus').textContent = panel.style.display === 'block' ? '활성' : '비활성';
+    }
+
+    window.onload = loadData;
+</script>
+
+</body>
+</html>
