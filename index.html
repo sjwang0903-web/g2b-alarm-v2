@@ -49,14 +49,14 @@
             </button>
         </div>
 
-        <!-- 탭 및 검색 바 -->
+        <!-- 탭 및 검색 바 (요청된 순서 적용) -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
             <div class="flex flex-wrap gap-2">
-                <button onclick="filterType('ALL')" id="tab-ALL" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm">전체</button>
-                <button onclick="filterType('본공고')" id="tab-본공고" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">본공고</button>
-                <button onclick="filterType('사전규격')" id="tab-사전규격" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">사전규격</button>
-                <button onclick="filterType('발주계획')" id="tab-발주계획" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">발주계획</button>
-                <button onclick="filterType('민간입찰')" id="tab-민간입찰" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">민간입찰(정비사업)</button>
+                <button onclick="filterType('ALL')" id="tab-ALL" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-white shadow-sm">전체</button>
+                <button onclick="filterType('본공고')" id="tab-본공고" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100">본공고</button>
+                <button onclick="filterType('민간입찰')" id="tab-민간입찰" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100">정비사업본공고</button>
+                <button onclick="filterType('사전규격')" id="tab-사전규격" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100">사전규격</button>
+                <button onclick="filterType('발주계획')" id="tab-발주계획" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100">발주계획</button>
             </div>
             <div class="relative flex-1 max-w-md">
                 <input type="text" id="search-input" onkeyup="renderDashboard()" placeholder="공고명, 기관명 검색..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -66,7 +66,7 @@
 
         <!-- 본문 그리드 레이아웃 -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- 공고 카드 목록 (3칸 차지) -->
+            <!-- 공고 카드 목록 (3칸 차지, 2열 카드 방식) -->
             <div class="lg:col-span-3 space-y-4">
                 <div class="flex justify-between items-center px-1">
                     <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
@@ -75,7 +75,6 @@
                     </h2>
                     <span id="admin-notice-info" class="text-xs text-amber-600 hidden font-medium">관리자 모드 (숨김 포함)</span>
                 </div>
-                <!-- 2열 그리드 적용 -->
                 <div id="notice-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
@@ -83,13 +82,26 @@
             <div class="space-y-6">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 sticky top-24">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-regular fa-calendar-days text-blue-600 mr-1"></i> 마감 달력</h3>
-                        <span id="calendar-month" class="text-xs font-semibold text-slate-600"></span>
+                        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-regular fa-calendar-days text-blue-600 mr-1"></i> 일정 달력</h3>
+                        <div class="flex items-center gap-1">
+                            <button onclick="changeMonth(-1)" class="p-1 text-slate-500 hover:text-slate-800"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                            <span id="calendar-month" class="text-xs font-bold text-slate-700 min-w-[70px] text-center"></span>
+                            <button onclick="changeMonth(1)" class="p-1 text-slate-500 hover:text-slate-800"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                        </div>
                     </div>
                     <div class="grid grid-cols-7 text-center text-xs font-semibold text-slate-400 mb-2">
                         <div class="text-red-500">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-500">토</div>
                     </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 text-center text-xs gap-1"></div>
+                    <div id="calendar-grid" class="grid grid-cols-7 text-center text-xs gap-1 min-h-[220px]"></div>
+
+                    <!-- 선택한 날짜의 공고 현황 요약 창 -->
+                    <div id="selected-date-info" class="mt-4 pt-3 border-t border-slate-100 hidden">
+                        <div class="font-bold text-xs text-slate-700 mb-2 flex justify-between items-center">
+                            <span id="selected-date-title">선택 날짜 공고</span>
+                            <button onclick="closeSelectedDateInfo()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <div id="selected-date-list" class="space-y-2 max-h-48 overflow-y-auto text-xs"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,6 +111,7 @@
         let allNotices = [];
         let currentTypeFilter = 'ALL';
         let isAdmin = false;
+        let currentCalendarDate = new Date();
 
         const USER_PASSWORD = "user1234";
         const ADMIN_PASSWORD = "admin5678";
@@ -141,28 +154,76 @@
             }
         }
 
+        function getCategoryBadge(type) {
+            switch(type) {
+                case '본공고': return { bg: 'bg-blue-100 text-blue-700 border-blue-200', dot: 'bg-blue-500', name: '본공고' };
+                case '민간입찰': return { bg: 'bg-purple-100 text-purple-700 border-purple-200', dot: 'bg-purple-500', name: '정비사업본공고' };
+                case '사전규격': return { bg: 'bg-emerald-100 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500', name: '사전규격' };
+                case '발주계획': return { bg: 'bg-orange-100 text-orange-700 border-orange-200', dot: 'bg-orange-500', name: '발주계획' };
+                default: return { bg: 'bg-slate-100 text-slate-700 border-slate-200', dot: 'bg-slate-500', name: type };
+            }
+        }
+
+        function calculateDDay(dateStr) {
+            if (!dateStr || dateStr === '-') return null;
+            const targetDate = new Date(dateStr.replace(/-/g, '/'));
+            if (isNaN(targetDate)) return null;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            targetDate.setHours(0, 0, 0, 0);
+
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays > 0) return `D-${diffDays}`;
+            if (diffDays === 0) return `D-DAY`;
+            return `마감`;
+        }
+
         function renderDashboard() {
             const keyword = document.getElementById('search-input').value.trim().toLowerCase();
             const listEl = document.getElementById('notice-list');
             listEl.innerHTML = '';
 
-            const filtered = allNotices.filter(item => {
+            // 1. 필터링
+            let filtered = allNotices.filter(item => {
                 if (!isAdmin && item.isHidden) return false;
                 if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) return false;
                 if (keyword && !(item.ntceNm || '').toLowerCase().includes(keyword) && !(item.organ || '').toLowerCase().includes(keyword)) return false;
                 return true;
             });
 
+            // 2. 정렬: 중요 표시(isImportant) 공고를 최상단으로 정렬
+            filtered.sort((a, b) => {
+                if (a.isImportant && !b.isImportant) return -1;
+                if (!a.isImportant && b.isImportant) return 1;
+                return 0;
+            });
+
             document.getElementById('notice-count').innerText = filtered.length;
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `<div class="col-span-2 bg-white p-12 text-center rounded-xl border border-slate-200 text-slate-400">등록된 공고가 없습니다.</div>`;
+                renderCalendar(currentCalendarDate, []);
                 return;
             }
 
             filtered.forEach(item => {
                 const isCheckedStyle = item.isChecked ? "bg-emerald-50/50 border-emerald-200 opacity-70" : "bg-white border-slate-200";
                 const isImportantBorder = item.isImportant ? "border-l-4 border-l-rose-500" : "";
+                const badge = getCategoryBadge(item.ntceKindNm);
+
+                // 본공고 평가일 D-Day 계산
+                let ddayBadgeHtml = '';
+                if (item.ntceKindNm === '본공고' || item.ntceKindNm === '민간입찰') {
+                    const targetDt = item.dateOpen !== '-' ? item.dateOpen : item.dateLimit;
+                    const dday = calculateDDay(targetDt);
+                    if (dday) {
+                        const ddayColor = dday === 'D-DAY' ? 'bg-rose-600 text-white animate-pulse' : (dday.startsWith('D-') ? 'bg-rose-100 text-rose-700' : 'bg-slate-200 text-slate-600');
+                        ddayBadgeHtml = `<span class="px-2 py-0.5 text-xs font-bold rounded ${ddayColor}">${dday}</span>`;
+                    }
+                }
 
                 // 기관 정보
                 let insttHtml = `<li class="text-slate-600">• 발주처: ${item.organ || '-'}</li>`;
@@ -219,12 +280,12 @@
                 }
 
                 listEl.innerHTML += `
-                    <div class="p-5 rounded-xl border ${isCheckedStyle} ${isImportantBorder} shadow-sm flex flex-col justify-between transition hover:shadow">
+                    <div class="p-5 rounded-xl border ${isCheckedStyle} ${isImportantBorder} shadow-sm flex flex-col justify-between transition hover:shadow relative">
                         <div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 font-bold text-xs rounded">${item.ntceKindNm}</span>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="px-2 py-0.5 border font-bold text-xs rounded ${badge.bg}">${badge.name}</span>
+                                ${ddayBadgeHtml}
                             </div>
-                            <!-- 제목 클릭 시 링크 이동 없음 (단순 텍스트) -->
                             <h3 class="font-bold text-sm text-slate-900 mb-2 leading-snug">${item.ntceNm}</h3>
                             ${chgHtml}
                             
@@ -251,14 +312,15 @@
                             </label>
                             <div class="flex items-center gap-2">
                                 <button onclick="toggleImportant('${item.id}')" class="px-2.5 py-1 rounded text-xs font-medium transition ${item.isImportant ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
-                                    ${item.isImportant ? '중요 취소' : '중요 지정'}
+                                    ${item.isImportant ? '★ 중요' : '중요 지정'}
                                 </button>
                                 ${isAdmin ? `<button onclick="toggleHide('${item.id}')" class="px-2.5 py-1 rounded text-xs font-medium bg-rose-100 text-rose-700">${item.isHidden ? '숨김해제' : '숨기기'}</button>` : ''}
                             </div>
                         </div>
                     </div>`;
             });
-            renderCalendar(new Date());
+
+            renderCalendar(currentCalendarDate, filtered);
         }
 
         function toggleCheck(id) {
@@ -296,21 +358,111 @@
 
         function filterType(type) {
             currentTypeFilter = type;
-            document.querySelectorAll('.tab-btn').forEach(b => b.className = "tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100");
-            document.getElementById(`tab-${type}`).className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm";
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.className = "tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100";
+            });
+            
+            const activeTab = document.getElementById(`tab-${type}`);
+            if (type === 'ALL') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-white shadow-sm";
+            else if (type === '본공고') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm";
+            else if (type === '민간입찰') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-purple-600 text-white shadow-sm";
+            else if (type === '사전규격') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white shadow-sm";
+            else if (type === '발주계획') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-orange-600 text-white shadow-sm";
+
             renderDashboard();
         }
 
-        function renderCalendar(baseDate) {
+        function changeMonth(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderDashboard();
+        }
+
+        function renderCalendar(baseDate, notices = allNotices) {
             const grid = document.getElementById('calendar-grid');
             document.getElementById('calendar-month').innerText = `${baseDate.getFullYear()}년 ${baseDate.getMonth() + 1}월`;
             grid.innerHTML = '';
-            const first = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1).getDay();
-            const last = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate();
-            for (let i = 0; i < first; i++) grid.innerHTML += `<div></div>`;
-            for (let d = 1; d <= last; d++) {
-                grid.innerHTML += `<div class="h-8 flex items-center justify-center border rounded text-slate-700 bg-slate-50">${d}</div>`;
+
+            const year = baseDate.getFullYear();
+            const month = baseDate.getMonth();
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="h-10"></div>`;
             }
+
+            for (let d = 1; d <= lastDate; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                
+                // 날짜 범위에 포함되는 공고 수집
+                const activeEvents = [];
+                notices.forEach(n => {
+                    const start = (n.dateNotice || '').slice(0, 10);
+                    const end = (n.dateOpen !== '-' ? n.dateOpen : n.dateLimit || '').slice(0, 10);
+                    
+                    if (start && end && start <= dateStr && dateStr <= end) {
+                        const badge = getCategoryBadge(n.ntceKindNm);
+                        activeEvents.push({ notice: n, badge: badge, start: start, end: end });
+                    }
+                });
+
+                let dotsHtml = '';
+                if (activeEvents.length > 0) {
+                    const uniqueTypes = [...new Set(activeEvents.map(e => e.badge.dot))];
+                    dotsHtml = `<div class="flex justify-center gap-0.5 mt-0.5 overflow-hidden">${uniqueTypes.slice(0, 3).map(dot => `<span class="w-1.5 h-1.5 rounded-full ${dot}"></span>`).join('')}</div>`;
+                }
+
+                grid.innerHTML += `
+                    <div onclick="selectDate('${dateStr}')" class="h-10 border rounded flex flex-col items-center justify-start pt-1 cursor-pointer hover:bg-blue-50 transition ${activeEvents.length > 0 ? 'bg-blue-50/40 border-blue-200' : 'bg-slate-50 border-slate-200'}">
+                        <span class="text-xs font-semibold text-slate-700">${d}</span>
+                        ${dotsHtml}
+                    </div>`;
+            }
+        }
+
+        function selectDate(dateStr) {
+            const infoBox = document.getElementById('selected-date-info');
+            const listEl = document.getElementById('selected-date-list');
+            document.getElementById('selected-date-title').innerText = `${dateStr} 공고 현황`;
+            listEl.innerHTML = '';
+
+            const matched = [];
+            allNotices.forEach(n => {
+                const start = (n.dateNotice || '').slice(0, 10);
+                const end = (n.dateOpen !== '-' ? n.dateOpen : n.dateLimit || '').slice(0, 10);
+                
+                if (start && end && start <= dateStr && dateStr <= end) {
+                    let step = '진행 중';
+                    if (start === dateStr) step = '공고일';
+                    else if (end === dateStr) step = '마감/평가일';
+                    else if (n.dateBrief && n.dateBrief.slice(0, 10) === dateStr) step = '현장설명일';
+
+                    matched.push({ notice: n, step: step });
+                }
+            });
+
+            if (matched.length === 0) {
+                listEl.innerHTML = `<p class="text-slate-400 py-2 text-center">해당 날짜에 진행 중인 공고가 없습니다.</p>`;
+            } else {
+                matched.forEach(m => {
+                    const badge = getCategoryBadge(m.notice.ntceKindNm);
+                    listEl.innerHTML += `
+                        <div class="p-2 rounded bg-slate-50 border border-slate-200">
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <span class="px-1.5 py-0.5 text-[10px] rounded font-bold ${badge.bg}">${badge.name}</span>
+                                <span class="text-[10px] font-bold text-rose-600">${m.step}</span>
+                            </div>
+                            <div class="font-bold text-slate-800 truncate">${m.notice.ntceNm}</div>
+                        </div>`;
+                });
+            }
+
+            infoBox.classList.remove('hidden');
+        }
+
+        function closeSelectedDateInfo() {
+            document.getElementById('selected-date-info').classList.add('hidden');
         }
 
         function showStatus(msg) {
