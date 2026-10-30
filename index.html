@@ -316,7 +316,6 @@
                     isCheckedStyle = "bg-slate-200 border-slate-300 opacity-60 text-slate-500";
                 }
 
-                // 중요 공고: 테두리 전체와 제목이 붉게 되도록 설정
                 const isImportantStyle = item.isImportant ? "border-2 border-rose-500 shadow-md bg-rose-50/20" : "";
                 const titleColorStyle = item.isImportant ? "text-rose-600 font-extrabold" : "text-slate-900";
                 const badge = getCategoryBadge(item.ntceKindNm);
@@ -373,11 +372,15 @@
 
                 let chgHtml = (item.chgRsn && item.chgRsn !== '-') ? `<div class="text-rose-600 font-bold text-xs mb-2">* 변경/취소 사유: ${item.chgRsn}</div>` : '';
 
-                // 댓글 목록 렌더링
+                // 댓글 목록 (작성자 + 날짜 + 내용 구조)
                 let commentsArr = item.comments || [];
                 let commentsHtml = commentsArr.map((c, cIdx) => `
                     <div class="flex justify-between items-start text-xs bg-slate-50 p-2 rounded border border-slate-200">
-                        <div><span class="text-slate-400 text-[10px] mr-1">${c.date}</span><span>${c.text}</span></div>
+                        <div>
+                            <span class="font-bold text-slate-700 mr-1 text-[11px]">[${c.author || '익명'}]</span>
+                            <span class="text-slate-400 text-[10px] mr-2">${c.date}</span>
+                            <span class="text-slate-800">${c.text}</span>
+                        </div>
                         <button onclick="deleteComment('${item.id}', ${cIdx})" class="text-slate-400 hover:text-rose-600 ml-2"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `).join('');
@@ -407,14 +410,15 @@
                             ${urlHtml}
                             ${filesHtml}
 
-                            <!-- 댓글 영역 -->
+                            <!-- 댓글 입력 영역 (이름 + 댓글 내용) -->
                             <div class="mt-4 pt-3 border-t border-slate-100 space-y-2">
                                 <div class="font-bold text-xs text-slate-700 flex items-center gap-1">
                                     <i class="fa-regular fa-comments text-blue-600"></i> 의견 및 댓글 (${commentsArr.length})
                                 </div>
                                 <div class="space-y-1 max-h-32 overflow-y-auto">${commentsHtml}</div>
                                 <div class="flex gap-1.5 mt-2">
-                                    <input type="text" id="comment-input-${item.id}" placeholder="댓글을 입력하세요..." class="flex-1 px-2.5 py-1.5 border rounded text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+                                    <input type="text" id="comment-author-${item.id}" placeholder="이름" class="w-20 px-2 py-1.5 border rounded text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+                                    <input type="text" id="comment-text-${item.id}" placeholder="댓글 내용..." class="flex-1 px-2.5 py-1.5 border rounded text-xs focus:ring-1 focus:ring-blue-500 outline-none">
                                     <button onclick="addComment('${item.id}')" class="px-3 py-1.5 bg-slate-800 text-white rounded text-xs font-semibold hover:bg-slate-700">등록</button>
                                 </div>
                             </div>
@@ -439,7 +443,6 @@
             renderCalendar(currentCalendarDate, filtered);
         }
 
-        // 일정 편집 모달 제어 함수들
         function openScheduleModal(id) {
             const item = allNotices.find(n => n.id === id);
             if (!item) return;
@@ -478,20 +481,23 @@
             }
         }
 
-        // 댓글 추가 및 삭제 함수
+        // 댓글 추가 함수 (이름 + 내용 반영)
         function addComment(id) {
-            const input = document.getElementById(`comment-input-${id}`);
-            const text = input.value.trim();
+            const authorInput = document.getElementById(`comment-author-${id}`);
+            const textInput = document.getElementById(`comment-text-${id}`);
+            
+            const author = authorInput.value.trim() || '익명';
+            const text = textInput.value.trim();
             if (!text) return;
 
             const item = allNotices.find(n => n.id === id);
             if (item) {
                 if (!item.comments) item.comments = [];
                 const nowStr = new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                item.comments.push({ text: text, date: nowStr });
+                item.comments.push({ author: author, text: text, date: nowStr });
 
                 saveState(id, { comments: item.comments });
-                input.value = '';
+                textInput.value = '';
                 renderDashboard();
             }
         }
