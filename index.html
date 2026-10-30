@@ -26,7 +26,6 @@
             </div>
 
             <div class="flex items-center space-x-3 flex-wrap">
-                <!-- Actions 실행 로그 확인 버튼 -->
                 <button onclick="openLogModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-terminal"></i> 수집 로그 확인
                 </button>
@@ -87,7 +86,7 @@
                 <div id="notice-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- 우측 사이드바 (달력 및 달력 아래 확장된 공고진행현황) -->
+            <!-- 우측 사이드바 (달력 및 공고진행현황) -->
             <div class="space-y-6">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 sticky top-24 space-y-4">
                     <div class="flex justify-between items-center">
@@ -103,14 +102,13 @@
                     </div>
                     <div id="calendar-grid" class="grid grid-cols-7 text-center text-xs gap-1"></div>
 
-                    <!-- 달력 밑에 공고진행현황 영역 (높이 대폭 확장 max-h-96) -->
                     <div class="pt-3 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-2">
                             <span id="selected-date-label" class="font-bold text-xs text-slate-700">날짜를 선택하세요</span>
                             <span id="selected-count" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0건</span>
                         </div>
                         <div id="calendar-day-notices" class="space-y-2 max-h-96 overflow-y-auto text-xs pr-1">
-                            <div class="text-slate-400 text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">달력의 날짜를 클릭하면 해당 날짜의 공고가 길게 표시됩니다.</div>
+                            <div class="text-slate-400 text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">달력의 날짜를 클릭하면 해당 날짜의 공고가 표시됩니다.</div>
                         </div>
                     </div>
                 </div>
@@ -252,14 +250,21 @@
             listEl.innerHTML = '';
 
             let filtered = allNotices.filter(item => {
+                // 일반 사용자는 숨김 공고 제외, 관리자 모드에서는 숨김 공고도 포함하여 표시
                 if (!isAdmin && item.isHidden) return false;
                 if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) return false;
                 if (keyword && !(item.ntceNm || '').toLowerCase().includes(keyword) && !(item.organ || '').toLowerCase().includes(keyword)) return false;
                 return true;
             });
 
-            // 정렬 순서: 1순위 중요 지정(isImportant) 맨 위, 2순위 최근 공고일(dateNotice) 기준 최신순
+            // 정렬 순서: 
+            // 0. 관리자 모드에서 숨김 처리된 공고(isHidden)는 맨 아래로
+            // 1. 중요 지정 공고(isImportant) 맨 위
+            // 2. 최근 공고일(dateNotice) 기준 최신순
             filtered.sort((a, b) => {
+                if (a.isHidden && !b.isHidden) return 1;
+                if (!a.isHidden && b.isHidden) return -1;
+
                 if (a.isImportant && !b.isImportant) return -1;
                 if (!a.isImportant && b.isImportant) return 1;
                 
@@ -277,7 +282,12 @@
             }
 
             filtered.forEach(item => {
-                const isCheckedStyle = item.isChecked ? "bg-emerald-50/50 border-emerald-200 opacity-70" : "bg-white border-slate-200";
+                // 관리자 모드에서 숨김 처리된 공고는 회색 배경 및 투명도 적용
+                let isCheckedStyle = item.isChecked ? "bg-emerald-50/50 border-emerald-200 opacity-70" : "bg-white border-slate-200";
+                if (isAdmin && item.isHidden) {
+                    isCheckedStyle = "bg-slate-200 border-slate-300 opacity-60 text-slate-500";
+                }
+
                 const isImportantBorder = item.isImportant ? "border-l-4 border-l-rose-500 shadow-md" : "";
                 const badge = getCategoryBadge(item.ntceKindNm);
 
@@ -457,6 +467,9 @@
                 
                 const activeEvents = [];
                 notices.forEach(n => {
+                    // 숨김 처리된 공고는 달력에 표시하지 않음
+                    if (n.isHidden) return;
+
                     const start = (n.dateNotice || '').slice(0, 10);
                     const end = (n.dateOpen !== '-' ? n.dateOpen : n.dateLimit || '').slice(0, 10);
                     
@@ -487,6 +500,9 @@
 
             const matched = [];
             allNotices.forEach(n => {
+                // 숨김 처리된 공고는 달력 하단 진행현황에서도 제외
+                if (n.isHidden) return;
+
                 const start = (n.dateNotice || '').slice(0, 10);
                 const end = (n.dateOpen !== '-' ? n.dateOpen : n.dateLimit || '').slice(0, 10);
                 
