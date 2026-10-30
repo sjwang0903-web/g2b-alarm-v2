@@ -12,18 +12,15 @@ sys.stdout.reconfigure(line_buffering=True)
 KST = timezone(timedelta(hours=9))
 now = datetime.now(KST)
 
-# 조회 기간: 최근 7일
-inqryBgnDt14 = (now - timedelta(days=7)).strftime("%Y%m%d") + "000000"
-inqryEndDt14 = now.strftime("%Y%m%d%H%M59")
+# 나라장터 API 표준 날짜 포맷 (YYYYMMDDHHMM)
+inqryBgnDt = (now - timedelta(days=7)).strftime("%Y%m%d0000")
+inqryEndDt = now.strftime("%Y%m%d2359")
 
-# Service Key 안전하게 불러오기
 RAW_SERVICE_KEY = os.environ.get("SERVICE_KEY", "").strip()
-# 이미 디코딩되어 있다면 unquote를 거쳐도 원본 유지
 SERVICE_KEY = unquote(RAW_SERVICE_KEY)
 
 WEB_JSON_FILE = "notices.json"
 
-# 키워드 및 금액 필터 (테스트 시 조건을 완화하여 동작 여부 확인)
 P1_KEYWORDS = ["설계", "건립", "신축", "개발"]
 P2_KEYWORDS = ["타당성", "마스터", "기본계획", "기본구상", "공모관리", "공모 관리"]
 EXCLUDE_KEYWORDS = ["건설사업관리용역", "폐기물", "감리자", "내진보강"]
@@ -105,7 +102,7 @@ def fetch_api_data(base_url, query_params):
         response = requests.get(base_url, params=params, timeout=15)
         
         if response.status_code != 200:
-            print(f"⚠️ HTTP Error {response.status_code} - {base_url}")
+            print(f"⚠️ HTTP Error {response.status_code} - {base_url} | 응답: {response.text[:100]}...")
             return None
         if "<errMsg>" in response.text or "SERVICE ERROR" in response.text:
             print(f"⚠️ API Response Error: {response.text[:200]}")
@@ -125,27 +122,25 @@ def format_datetime_str(dt_str):
 
 def check_bids():
     matched_bids = []
-    endpoints = [
-        ("본공고", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc"),
-        ("본공고", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoCnstwk"),
-        ("사전규격", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getPreSpecListServc"),
-        ("사전규격", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getPreSpecListCnstwk"),
-        ("발주계획", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getOrderPlanList")
+    
+    # 각 서비스별로 맞는 파라미터 적용
+    targets = [
+        ("본공고", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc", {"inqryDiv": "1", "inqryBgnDt": inqryBgnDt, "inqryEndDt": inqryEndDt}),
+        ("본공고", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoCnstwk", {"inqryDiv": "1", "inqryBgnDt": inqryBgnDt, "inqryEndDt": inqryEndDt}),
+        ("사전규격", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getPreSpecListServc", {"inqryBgnDt": inqryBgnDt[:8], "inqryEndDt": inqryEndDt[:8]}),
+        ("사전규격", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getPreSpecListCnstwk", {"inqryBgnDt": inqryBgnDt[:8], "inqryEndDt": inqryEndDt[:8]}),
+        ("발주계획", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getOrderPlanList", {"inqryBgnDt": inqryBgnDt[:6], "inqryEndDt": inqryEndDt[:6]})
     ]
 
-    print(f"🔍 수집 시작: {inqryBgnDt14[:8]} ~ {inqryEndDt14[:8]}")
+    print(f"🔍 수집 시작 (기간: {inqryBgnDt} ~ {inqryEndDt})")
 
-    for source_type, base_url in endpoints:
+    for source_type, base_url, base_params5 in targets:
         page_no = 1
         while page_no <= 2:
-            root = fetch_api_data(base_url, {
-                "inqryDiv": "1",
-                "inqryBgnDt": inqryBgnDt14,
-                "inqryEndDt": inqryEndDt14,
-                "pageNo": str(page_no),
-                "numOfRows": "50"
-            })
+            params = base_params5.copy()
+            params.update({"pageNo": str(page_no), "numOfRows": "50"})
             
+            root = fetch_api_data(base_url, params)
             if root is None:
                 break
                 
@@ -158,11 +153,9 @@ def check_bids():
             for item in items:
                 bid_nm = item.findtext('bidNtceNm') or item.findtext('prslPblancNm') or item.findtext('bfSpecNm') or item.findtext('ordrPlnNm') or '-'
                 
-                # 제외 키워드 검사
                 if any(ex in bid_nm for ex in EXCLUDE_KEYWORDS):
                     continue
                 
-                # 포함 키워드 검사
                 has_p1 = any(k in bid_nm for k in P1_KEYWORDS)
                 has_p2 = any(k in bid_nm for k in P2_KEYWORDS)
                 
@@ -175,7 +168,6 @@ def check_bids():
                 except ValueError:
                     price_val = 0
 
-                # 조건 만족 시 수집 리스트에 추가
                 matched_bids.append({
                     'source_type': source_type,
                     'title': bid_nm,
