@@ -17,10 +17,9 @@ now = datetime.now(KST)
 # -------------------------------------------------------------
 # 날짜 및 기간 설정
 # -------------------------------------------------------------
-# 최근 7일간의 공고 데이터를 웹 대시보드용으로 수집
 past_7_days = now - timedelta(days=7)
 
-inqryBgnDt14 = past_7_days.strftime("%Y%m%d000000")
+inqryBgnDt14 = past_7_days.strftime("%Y%m%d%H%M00")
 inqryEndDt14 = now.strftime("%Y%m%d%H%M59")
 
 inqryBgnDate12 = past_7_days.strftime("%Y%m%d0000")
@@ -33,7 +32,7 @@ RAW_SERVICE_KEY = unquote(unquote(os.environ.get("SERVICE_KEY", "").strip()))
 
 WEB_JSON_FILE = "notices.json"
 
-# 키워드 및 제외키워드 설정
+# 키워드 및 제외키워드 설정 ("00부대" 포함)
 P1_KEYWORDS = ["설계", "건립", "신축", "개발"]
 P2_KEYWORDS = ["타당성", "마스터", "기본계획", "기본구상", "공모관리", "공모 관리"]
 EXCLUDE_KEYWORDS = ["건설사업관리용역", "폐기물", "감리자", "내진보강", "00부대"]
@@ -180,27 +179,39 @@ def check_bids():
     print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')} KST] 알리미2 수집 시작")
     print(f"==================================================")
 
-    # 1. 본공고 API
+    # 1. 본공고 API (알리미1 검증 로직 반영)[cite: 4]
     print("\n[1] 본공고 API 조회 중...")
     bid_endpoints = [
-        ("본공고", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc"),
-        ("본공고", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoCnstwk")
+        ("용역", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc"),
+        ("공사", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoCnstwk")
     ]
 
-    for source_type, base_url in bid_endpoints:
+    for category_name, base_url in bid_endpoints:
         page_no = 1
-        while page_no <= 2:
+        num_of_rows = "100"
+        
+        while True:
             params = {
                 "inqryDiv": "1",
                 "inqryBgnDt": inqryBgnDt14,
                 "inqryEndDt": inqryEndDt14,
                 "pageNo": str(page_no),
-                "numOfRows": "50"
+                "numOfRows": num_of_rows
             }
             
             root = fetch_api_data(base_url, params)
             items = root.findall(".//item") if root is not None else []
-            print(f"  -> [{source_type}] 페이지 {page_no} 수집: {len(items)}건")
+            
+            if not items and page_no == 1:
+                params["inqryBgnDt"] = inqryBgnDate12
+                params["inqryEndDt"] = today_str12
+                root = fetch_api_data(base_url, params)
+                items = root.findall(".//item") if root is not None else []
+
+            total_count_elem = root.find(".//totalCount") if root is not None else None
+            total_count = int(total_count_elem.text) if total_count_elem is not None and total_count_elem.text.isdigit() else 0
+
+            print(f"  -> [{category_name}] 본공고 페이지 {page_no} 조회 성공! (수집 건수: {len(items)}건)")
 
             if not items:
                 break
@@ -211,25 +222,26 @@ def check_bids():
                 if any(ex in bid_nm for ex in EXCLUDE_KEYWORDS):
                     continue
 
-                has_p1 = any(k in bid_nm for k in P1_KEYWORDS)
-                has_p2 = any(k in bid_nm for k in P2_KEYWORDS)
+                has_p1_kw = any(k in bid_nm for k in P1_KEYWORDS)
+                has_p2_kw = any(k in bid_nm for k in P2_KEYWORDS)
 
-                if not (has_p1 or has_p2):
+                if not (has_p1_kw or has_p2_kw):
                     continue
 
                 presmpt_prce = (
                     item.findtext('presmptPrce') or 
                     item.findtext('asignBdgAmt') or 
-                    item.findtext('estmAmt') or 
+                    item.findtext('estmAmt') or
                     item.findtext('totpjtPrce') or '0'
                 )
+
                 try:
                     price_val = float(presmpt_prce.replace(',', '').strip())
                 except ValueError:
                     price_val = 0
 
-                is_p1 = has_p1 and price_val >= 500000000
-                is_p2 = has_p2
+                is_p1 = has_p1_kw and price_val >= 500000000
+                is_p2 = has_p2_kw
 
                 if is_p1 or is_p2:
                     matched_bids.append({
@@ -247,30 +259,30 @@ def check_bids():
                         'chg_rsn': item.findtext('chgNtceRsn', '')
                     })
 
-            if len(items) < 50:
+            if len(items) < int(num_of_rows) or (total_count and page_no * int(num_of_rows) >= total_count):
                 break
             page_no += 1
 
-    # 2. 발주계획 API
+    # 2. 발주계획 API[cite: 4]
     print("\n[2] 발주계획 API 조회 중...")
     plan_endpoints = [
-        ("발주계획", "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListServc"),
-        ("발주계획", "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListCnstwk")
+        ("용역", "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListServc"),
+        ("공사", "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListCnstwk")
     ]
 
-    for source_type, base_url in plan_endpoints:
+    for category_name, base_url in plan_endpoints:
         params = {
             "inqryDiv": "1",
             "orderBgnYm": order_bgn_ym,
             "orderEndYm": order_end_ym,
             "inqryBgnDt": inqryBgnDate12,
             "inqryEndDt": today_str12,
-            "numOfRows": "200"
+            "numOfRows": "500"
         }
         
         root = fetch_api_data(base_url, params)
         items = root.findall(".//item") if root is not None else []
-        print(f"  -> [{source_type}] 수집: {len(items)}건")
+        print(f"  -> [{category_name}] 발주계획 조회 성공! (수집 건수: {len(items)}건)")
 
         for item in items:
             biz_nm = item.findtext('bizNm') or item.findtext('orderPlanNm') or item.findtext('pblancNm') or '-'
@@ -278,10 +290,10 @@ def check_bids():
             if any(ex in biz_nm for ex in EXCLUDE_KEYWORDS):
                 continue
 
-            has_p1 = any(k in biz_nm for k in P1_KEYWORDS)
-            has_p2 = any(k in biz_nm for k in P2_KEYWORDS)
+            has_p1_kw = any(k in biz_nm for k in P1_KEYWORDS)
+            has_p2_kw = any(k in biz_nm for k in P2_KEYWORDS)
 
-            if not (has_p1 or has_p2):
+            if not (has_p1_kw or has_p2_kw):
                 continue
 
             sum_order_amt = item.findtext('sumOrderAmt') or item.findtext('totpjtPrce') or item.findtext('orderPrce') or '0'
@@ -290,8 +302,8 @@ def check_bids():
             except ValueError:
                 price_val = 0
 
-            is_p1 = has_p1 and price_val >= 500000000
-            is_p2 = has_p2
+            is_p1 = has_p1_kw and price_val >= 500000000
+            is_p2 = has_p2_kw
 
             if is_p1 or is_p2:
                 matched_bids.append({
@@ -309,25 +321,28 @@ def check_bids():
                     'chg_rsn': ''
                 })
 
-    # 3. 사전규격 API
+    # 3. 사전규격 API[cite: 4]
     print("\n[3] 사전규격 API 조회 중...")
     bf_spec_endpoints = [
-        ("사전규격", "http://apis.data.go.kr/1230000/ao/HrcspSsstndrdInfoService/getPublicPrcureThngInfoServc"),
-        ("사전규격", "http://apis.data.go.kr/1230000/ao/HrcspSsstndrdInfoService/getPublicPrcureThngInfoCnstwk")
+        ("용역", "http://apis.data.go.kr/1230000/ao/HrcspSsstndrdInfoService/getPublicPrcureThngInfoServc"),
+        ("공사", "http://apis.data.go.kr/1230000/ao/HrcspSsstndrdInfoService/getPublicPrcureThngInfoCnstwk")
     ]
 
-    for source_type, base_url in bf_spec_endpoints:
+    for category_name, base_url in bf_spec_endpoints:
         for inqry_div in ["1", "2"]:
             params = {
                 "inqryDiv": inqry_div,
                 "inqryBgnDt": inqryBgnDate12,
                 "inqryEndDt": today_str12,
-                "numOfRows": "200"
+                "numOfRows": "500"
             }
             
             root = fetch_api_data(base_url, params)
             items = root.findall(".//item") if root is not None else []
-            print(f"  -> [{source_type}][모드{inqry_div}] 수집: {len(items)}건")
+            print(f"  -> [{category_name}][모드{inqry_div}] 사전규격 조회 성공! (수집 건수: {len(items)}건)")
+
+            if not items:
+                continue
 
             for item in items:
                 product_nm = item.findtext('prdctClsfcNoNm') or item.findtext('ntceNm') or item.findtext('bfSpecNm') or '-'
@@ -335,10 +350,10 @@ def check_bids():
                 if any(ex in product_nm for ex in EXCLUDE_KEYWORDS):
                     continue
 
-                has_p1 = any(k in product_nm for k in P1_KEYWORDS)
-                has_p2 = any(k in product_nm for k in P2_KEYWORDS)
+                has_p1_kw = any(k in product_nm for k in P1_KEYWORDS)
+                has_p2_kw = any(k in product_nm for k in P2_KEYWORDS)
 
-                if not (has_p1 or has_p2):
+                if not (has_p1_kw or has_p2_kw):
                     continue
 
                 assign_budget = item.findtext('asignBdgtAmt') or item.findtext('presmptPrce') or item.findtext('totpjtPrce') or '0'
@@ -347,8 +362,8 @@ def check_bids():
                 except ValueError:
                     price_val = 0
 
-                is_p1 = has_p1 and price_val >= 500000000
-                is_p2 = has_p2
+                is_p1 = has_p1_kw and price_val >= 500000000
+                is_p2 = has_p2_kw
 
                 if is_p1 or is_p2:
                     matched_bids.append({
@@ -366,42 +381,44 @@ def check_bids():
                         'chg_rsn': ''
                     })
 
-    # 4. 민간입찰공고 API
+    # 4. 민간입찰공고 API[cite: 4]
     print("\n[4] 민간입찰공고 API 조회 중...")
     private_url = "http://apis.data.go.kr/1230000/ao/PrvtBidNtceService/getPrvtBidPblancListInfoServc"
     
     page_no = 1
-    while page_no <= 2:
+    num_of_rows = "100"
+    
+    while True:
         params = {
             "inqryDiv": "1",
             "inqryBgnDt": inqryBgnDate12,
             "inqryEndDt": today_str12,
             "pageNo": str(page_no),
-            "numOfRows": "50"
+            "numOfRows": num_of_rows
         }
         
         root = fetch_api_data(private_url, params)
         items = root.findall(".//item") if root is not None else []
-        print(f"  -> [민간입찰] 페이지 {page_no} 수집: {len(items)}건")
-
+        print(f"  -> [민간입찰공고] 페이지 {page_no} 조회 성공! (수집 건수: {len(items)}건)")
+        
         if not items:
             break
-
+            
         for item in items:
             title = item.findtext('ntceNm') or item.findtext('pblancNm') or item.findtext('bizNm') or '-'
-
+            
             if any(ex in title for ex in EXCLUDE_KEYWORDS):
                 continue
-
+                
             if "설계자" not in title:
                 continue
-
+            
             matched_bids.append({
                 'source_type': '민간입찰',
                 'title': f"(정비사업){title}",
                 'notice_instt': item.findtext('ntceInsttNm') or item.findtext('rlSndInsttNm') or '-',
                 'raw_price': 0,
-                'notice_dt': format_datetime_str(item.findtext('nticeDt', '-')),
+                'notice_dt': format_datetime_str(item.findtext('ntceDt', '-')),
                 'expl_info': format_datetime_str(item.findtext('sptDscrptDt', '-')),
                 'reg_close_dt': '-',
                 'bid_close_dt': format_datetime_str(item.findtext('bidClseDt', '-')),
@@ -410,8 +427,8 @@ def check_bids():
                 'attachments': extract_attachments(item),
                 'chg_rsn': ''
             })
-
-        if len(items) < 50:
+            
+        if len(items) < int(num_of_rows):
             break
         page_no += 1
 
