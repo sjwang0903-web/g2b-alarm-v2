@@ -12,15 +12,16 @@ sys.stdout.reconfigure(line_buffering=True)
 KST = timezone(timedelta(hours=9))
 now = datetime.now(KST)
 
-past_7_days = now - timedelta(days=7)
-inqryBgnDt14 = past_7_days.strftime("%Y%m%d%H%M00")
-inqryEndDt14 = now.strftime("%Y%m%d%H%M59")
+# -------------------------------------------------------------
+# 날짜 및 기간 설정 (당일 기준)
+# -------------------------------------------------------------
+today_start_14 = now.strftime("%Y%m%d000000")
+today_end_14 = now.strftime("%Y%m%d%H%M59")
 
-inqryBgnDate12 = past_7_days.strftime("%Y%m%d0000")
-today_str12 = now.strftime("%Y%m%d2359")
+today_start_12 = now.strftime("%Y%m%d0000")
+today_end_12 = now.strftime("%Y%m%d2359")
 
-order_bgn_ym = past_7_days.strftime("%Y%m")
-order_end_ym = f"{now.year + 1}{now.month:02d}"
+order_ym = now.strftime("%Y%m")
 
 RAW_SERVICE_KEY = unquote(unquote(os.environ.get("SERVICE_KEY", "").strip()))
 WEB_JSON_FILE = "notices.json"
@@ -85,7 +86,8 @@ def extract_attachments(item):
             final_attachments.append({'name': name, 'url': info['url']})
     return final_attachments
 
-def save_web_dashboard_json(items):
+def save_web_dashboard_json(new_items):
+    # 기존에 저장된 데이터 불러오기 (과거 데이터 및 사용자 체크 상태 유지 목적)
     existing_items_map = {}
     if os.path.exists(WEB_JSON_FILE):
         try:
@@ -98,22 +100,33 @@ def save_web_dashboard_json(items):
         except Exception:
             pass
 
-    formatted_list = []
-    for idx, item in enumerate(items, 1):
-        item_id = f"AUTO_{idx:03d}"
+    # 신규 수집된 아이템과 기존 아이템 병합 (중복 타이틀/키 기준 관리)
+    combined_map = {}
+    
+    # 먼저 기존 데이터를 맵에 담되, 고유 키(기관+제목)로 중복 방지
+    for item in existing_items_map.values():
+        key = f"{item.get('ntceKindNm')}_{item.get('ntceNm')}"
+        combined_map[key] = item
+
+    # 당일 새로 수집된 데이터 병합 (상태값 보존)
+    for idx, item in enumerate(new_items, 1):
+        key = f"{item.get('source_type')}_{item.get('title')}"
         
         is_hidden = False
         comments = []
         is_important = False
         is_checked = False
-        
-        if item_id in existing_items_map:
-            is_hidden = existing_items_map[item_id].get("isHidden", False)
-            comments = existing_items_map[item_id].get("comments", [])
-            is_important = existing_items_map[item_id].get("isImportant", False)
-            is_checked = existing_items_map[item_id].get("isChecked", False)
+        item_id = f"AUTO_{idx:03d}"
 
-        formatted_list.append({
+        if key in combined_map:
+            # 기존에 이미 있던 공고라면 기존 ID와 상태값 유지
+            item_id = combined_map[key]["id"]
+            is_hidden = combined_map[key].get("isHidden", False)
+            comments = combined_map[key].get("comments", [])
+            is_important = combined_map[key].get("isImportant", False)
+            is_checked = combined_map[key].get("isChecked", False)
+
+        combined_map[key] = {
             "id": item_id,
             "ntceKindNm": item.get('source_type'),
             "ntceNm": item.get('title'),
@@ -135,11 +148,13 @@ def save_web_dashboard_json(items):
             "url": item.get('url', ''),
             "comments": comments,
             "files": item.get('attachments', [])
-        })
+        }
+
+    final_list = list(combined_map.values())
 
     try:
         with open(WEB_JSON_FILE, "w", encoding="utf-8") as f:
-            json.dump(formatted_list, f, ensure_ascii=False, indent=4)
+            json.dump(final_list, f, ensure_ascii=False, indent=4)
         
         if os.environ.get("GITHUB_ACTIONS") == "true":
             subprocess.run(["git", "config", "--global", "user.name", "github-actions[bot]"], check=True)
@@ -155,7 +170,7 @@ def save_web_dashboard_json(items):
 def check_bids():
     matched_bids = []
 
-    # 1. 본공고
+    # 1. 본공고 (당일)
     bid_endpoints = [
         ("용역", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc"),
         ("공사", "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoCnstwk")
@@ -163,12 +178,12 @@ def check_bids():
     for category_name, base_url in bid_endpoints:
         page_no = 1
         while page_no <= 2:
-            params = {"inqryDiv": "1", "inqryBgnDt": inqryBgnDt14, "inqryEndDt": inqryEndDt14, "pageNo": str(page_no), "numOfRows": "50"}
+            params = {"inqryDiv": "1", "inqryBgnDt": today_start_14, "inqryEndDt": today_end_14, "pageNo": str(page_no), "numOfRows": "50"}
             root = fetch_api_data(base_url, params)
             items = root.findall(".//item") if root is not None else []
             if not items and page_no == 1:
-                params["inqryBgnDt"] = inqryBgnDate12
-                params["inqryEndDt"] = today_str12
+                params["inqryBgnDt"] = today_start_12
+                params["inqryEndDt"] = today_end_12
                 root = fetch_api_data(base_url, params)
                 items = root.findall(".//item") if root is not None else []
             if not items:
@@ -192,7 +207,7 @@ def check_bids():
                 if (has_p1 and price_val >= 500000000) or has_p2:
                     matched_bids.append({
                         'source_type': '본공고',
-                        'title': f"(본공고) {bid_nm}",
+                        'title': bid_nm,
                         'notice_instt': item.findtext('ntceInsttNm') or item.findtext('rlSndInsttNm') or '-',
                         'demand_instt': item.findtext('dminsttNm', '-'),
                         'raw_price': price_val,
@@ -208,13 +223,13 @@ def check_bids():
                     })
             page_no += 1
 
-    # 2. 발주계획
+    # 2. 발주계획 (당월 기준)
     plan_endpoints = [
         ("용역", "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListServc"),
         ("공사", "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListCnstwk")
     ]
     for category_name, base_url in plan_endpoints:
-        params = {"inqryDiv": "1", "orderBgnYm": order_bgn_ym, "orderEndYm": order_end_ym, "inqryBgnDt": inqryBgnDate12, "inqryEndDt": today_str12, "numOfRows": "200"}
+        params = {"inqryDiv": "1", "orderBgnYm": order_ym, "orderEndYm": order_ym, "inqryBgnDt": today_start_12, "inqryEndDt": today_end_12, "numOfRows": "100"}
         root = fetch_api_data(base_url, params)
         items = root.findall(".//item") if root is not None else []
         for item in items:
@@ -239,7 +254,7 @@ def check_bids():
                 order_period = f"{order_year}년 {order_mnth}월" if (order_year or order_mnth) else "-"
                 matched_bids.append({
                     'source_type': '발주계획',
-                    'title': f"(계획) {biz_nm}",
+                    'title': biz_nm,
                     'notice_instt': item.findtext('orderInsttNm') or item.findtext('rlSndInsttNm') or '-',
                     'demand_instt': '-',
                     'raw_price': price_val,
@@ -255,14 +270,14 @@ def check_bids():
                     'chg_rsn': ''
                 })
 
-    # 3. 사전규격
+    # 3. 사전규격 (당일)
     bf_spec_endpoints = [
         ("용역", "http://apis.data.go.kr/1230000/ao/HrcspSsstndrdInfoService/getPublicPrcureThngInfoServc"),
         ("공사", "http://apis.data.go.kr/1230000/ao/HrcspSsstndrdInfoService/getPublicPrcureThngInfoCnstwk")
     ]
     for category_name, base_url in bf_spec_endpoints:
         for inqry_div in ["1", "2"]:
-            params = {"inqryDiv": inqry_div, "inqryBgnDt": inqryBgnDate12, "inqryEndDt": today_str12, "numOfRows": "200"}
+            params = {"inqryDiv": inqry_div, "inqryBgnDt": today_start_12, "inqryEndDt": today_end_12, "numOfRows": "100"}
             root = fetch_api_data(base_url, params)
             items = root.findall(".//item") if root is not None else []
             for item in items:
@@ -284,7 +299,7 @@ def check_bids():
                 if (has_p1 and price_val >= 500000000) or has_p2:
                     matched_bids.append({
                         'source_type': '사전규격',
-                        'title': f"(사전) {product_nm}",
+                        'title': product_nm,
                         'notice_instt': item.findtext('orderInsttNm') or item.findtext('rlSndInsttNm') or '-',
                         'demand_instt': item.findtext('rlDminsttNm') or '-',
                         'raw_price': price_val,
@@ -300,11 +315,11 @@ def check_bids():
                         'chg_rsn': ''
                     })
 
-    # 4. 민간입찰공고
+    # 4. 민간입찰공고 (당일)
     private_url = "http://apis.data.go.kr/1230000/ao/PrvtBidNtceService/getPrvtBidPblancListInfoServc"
     page_no = 1
     while page_no <= 2:
-        params = {"inqryDiv": "1", "inqryBgnDt": inqryBgnDate12, "inqryEndDt": today_str12, "pageNo": str(page_no), "numOfRows": "50"}
+        params = {"inqryDiv": "1", "inqryBgnDt": today_start_12, "inqryEndDt": today_end_12, "pageNo": str(page_no), "numOfRows": "50"}
         root = fetch_api_data(private_url, params)
         items = root.findall(".//item") if root is not None else []
         if not items:
@@ -317,7 +332,7 @@ def check_bids():
                 continue
             matched_bids.append({
                 'source_type': '민간입찰',
-                'title': f"(정비사업) {title}",
+                'title': title,
                 'notice_instt': item.findtext('ntceInsttNm') or item.findtext('rlSndInsttNm') or '-',
                 'demand_instt': '-',
                 'raw_price': 0,
