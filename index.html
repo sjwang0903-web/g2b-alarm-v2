@@ -66,6 +66,7 @@
                 <button onclick="filterType('민간입찰')" id="tab-민간입찰" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100">정비사업본공고</button>
                 <button onclick="filterType('사전규격')" id="tab-사전규격" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100">사전규격</button>
                 <button onclick="filterType('발주계획')" id="tab-발주계획" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100">발주계획</button>
+                <button onclick="filterType('COMMENTS')" id="tab-COMMENTS" class="tab-btn hidden px-4 py-2 rounded-lg text-sm font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200"><i class="fa-regular fa-comments mr-1"></i> 댓글 모아보기</button>
             </div>
             <div class="relative flex-1 max-w-md">
                 <input type="text" id="search-input" onkeyup="renderDashboard()" placeholder="공고명, 기관명 검색..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -78,7 +79,7 @@
             <div class="lg:col-span-3 space-y-4">
                 <div class="flex justify-between items-center px-1">
                     <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                        <span>공고 목록</span>
+                        <span id="list-title">공고 목록</span>
                         <span id="notice-count" class="bg-blue-100 text-blue-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">0</span>
                     </h2>
                     <span id="admin-notice-info" class="text-xs text-amber-600 hidden font-medium">관리자 모드 (숨김 포함 / 일정 편집 가능)</span>
@@ -196,7 +197,6 @@
         const USER_PASSWORD = "user1234";
         const ADMIN_PASSWORD = "admin5678";
 
-        // 최초 접속 시 비밀번호 인증 수행
         document.addEventListener('DOMContentLoaded', () => {
             checkInitialAuth();
         });
@@ -216,12 +216,24 @@
                 }
             }
 
-            // 모드 UI 반영
+            applyAdminUIMode();
+            loadNotices();
+        }
+
+        function applyAdminUIMode() {
             document.getElementById('btn-user-mode').className = isAdmin ? "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white" : "px-3 py-1.5 rounded-md font-medium transition text-white bg-blue-600";
             document.getElementById('btn-admin-mode').className = isAdmin ? "px-3 py-1.5 rounded-md font-medium transition text-white bg-amber-600" : "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white";
             document.getElementById('admin-notice-info').classList.toggle('hidden', !isAdmin);
-
-            loadNotices();
+            
+            const commentTab = document.getElementById('tab-COMMENTS');
+            if (isAdmin) {
+                commentTab.classList.remove('hidden');
+            } else {
+                commentTab.classList.add('hidden');
+                if (currentTypeFilter === 'COMMENTS') {
+                    filterType('ALL');
+                }
+            }
         }
 
         function requestAuth(toAdmin) {
@@ -229,9 +241,7 @@
             if (toAdmin && pass !== ADMIN_PASSWORD) { alert("비밀번호가 틀렸습니다."); return; }
             if (!toAdmin && pass !== USER_PASSWORD) { alert("비밀번호가 틀렸습니다."); return; }
             isAdmin = toAdmin;
-            document.getElementById('btn-user-mode').className = isAdmin ? "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white" : "px-3 py-1.5 rounded-md font-medium transition text-white bg-blue-600";
-            document.getElementById('btn-admin-mode').className = isAdmin ? "px-3 py-1.5 rounded-md font-medium transition text-white bg-amber-600" : "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white";
-            document.getElementById('admin-notice-info').classList.toggle('hidden', !isAdmin);
+            applyAdminUIMode();
             renderDashboard();
         }
 
@@ -241,6 +251,9 @@
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 
+                const nowTime = new Date().getTime();
+                const localState = JSON.parse(localStorage.getItem('notice_local_state') || '{}');
+
                 if (Array.isArray(data)) {
                     allNotices = data;
                 } else {
@@ -252,8 +265,15 @@
                     }
                 }
                 
-                const localState = JSON.parse(localStorage.getItem('notice_local_state') || '{}');
+                // 신규 수집된 공고에 대한 최초 발견 시간(discoveredAt) 기록 (최초 1회 부여)
                 allNotices.forEach(n => {
+                    if (!localState[n.id]) {
+                        localState[n.id] = {};
+                    }
+                    if (!localState[n.id].discoveredAt) {
+                        localState[n.id].discoveredAt = nowTime; // 처음 로드/발견된 시점 기록
+                    }
+
                     if (localState[n.id]) {
                         if (localState[n.id].isHidden !== undefined) n.isHidden = localState[n.id].isHidden;
                         if (localState[n.id].isImportant !== undefined) n.isImportant = localState[n.id].isImportant;
@@ -262,8 +282,10 @@
                         if (localState[n.id].dateNotice !== undefined) n.dateNotice = localState[n.id].dateNotice;
                         if (localState[n.id].dateLimit !== undefined) n.dateLimit = localState[n.id].dateLimit;
                         if (localState[n.id].dateOpen !== undefined) n.dateOpen = localState[n.id].dateOpen;
+                        n.discoveredAt = localState[n.id].discoveredAt;
                     }
                 });
+                localStorage.setItem('notice_local_state', JSON.stringify(localState));
                 showStatus("✅ 데이터를 성공적으로 불러왔습니다.");
             } catch (e) {
                 showStatus("⚠️ notices.json 파일이 없습니다. 액션을 실행해 주세요.", "warning");
@@ -309,7 +331,13 @@
 
             let filtered = allNotices.filter(item => {
                 if (!isAdmin && item.isHidden) return false;
-                if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) return false;
+                
+                if (currentTypeFilter === 'COMMENTS') {
+                    if (!item.comments || item.comments.length === 0) return false;
+                } else if (currentTypeFilter !== 'ALL' && item.ntceKindNm !== currentTypeFilter) {
+                    return false;
+                }
+
                 if (keyword && !(item.ntceNm || '').toLowerCase().includes(keyword) && !(item.organ || '').toLowerCase().includes(keyword)) return false;
                 return true;
             });
@@ -317,6 +345,12 @@
             filtered.sort((a, b) => {
                 if (a.isHidden && !b.isHidden) return 1;
                 if (!a.isHidden && b.isHidden) return -1;
+
+                if (currentTypeFilter === 'COMMENTS') {
+                    const latestA = a.comments && a.comments.length > 0 ? Math.max(...a.comments.map(c => c.timestamp || 0)) : 0;
+                    const latestB = b.comments && b.comments.length > 0 ? Math.max(...b.comments.map(c => c.timestamp || 0)) : 0;
+                    return latestB - latestA;
+                }
 
                 if (a.isImportant && !b.isImportant) return -1;
                 if (!a.isImportant && b.isImportant) return 1;
@@ -334,6 +368,9 @@
                 return;
             }
 
+            const nowTime = new Date().getTime();
+            const seventyTwoHours = 72 * 60 * 60 * 1000;
+
             filtered.forEach(item => {
                 let isCheckedStyle = item.isChecked ? "bg-emerald-50/50 border-emerald-200 opacity-70" : "bg-white border-slate-200";
                 if (isAdmin && item.isHidden) {
@@ -343,6 +380,10 @@
                 const isImportantStyle = item.isImportant ? "border-2 border-rose-500 shadow-md bg-rose-50/20" : "";
                 const titleColorStyle = item.isImportant ? "text-rose-600 font-extrabold" : "text-slate-900";
                 const badge = getCategoryBadge(item.ntceKindNm);
+
+                // 새로 수집된 공고(72시간 이내)인 경우 공고 상단에 NEW 뱃지 표시
+                const isNewNotice = item.discoveredAt && (nowTime - item.discoveredAt < seventyTwoHours);
+                const noticeNewBadge = isNewNotice ? `<span class="px-2 py-0.5 bg-rose-500 text-white text-[10px] font-extrabold rounded animate-pulse shadow-sm">NEW 공고</span>` : '';
 
                 let ddayBadgeHtml = '';
                 if (item.ntceKindNm === '본공고' || item.ntceKindNm === '민간입찰') {
@@ -396,23 +437,32 @@
 
                 let chgHtml = (item.chgRsn && item.chgRsn !== '-') ? `<div class="text-rose-600 font-bold text-xs mb-2">* 변경/취소 사유: ${item.chgRsn}</div>` : '';
 
+                // 댓글 목록 (72시간 이내 작성된 댓글에 NEW 배지 표시)
                 let commentsArr = item.comments || [];
-                let commentsHtml = commentsArr.map((c, cIdx) => `
-                    <div class="flex justify-between items-start text-xs bg-slate-50 p-2 rounded border border-slate-200">
-                        <div>
-                            <span class="font-bold text-slate-700 mr-1 text-[11px]">[${c.author || '익명'}]</span>
-                            <span class="text-slate-400 text-[10px] mr-2">${c.date}</span>
-                            <span class="text-slate-800">${c.text}</span>
+                let commentsHtml = commentsArr.map((c, cIdx) => {
+                    const isNewComment = c.timestamp && (nowTime - c.timestamp < seventyTwoHours);
+                    const commentNewBadge = isNewComment ? `<span class="ml-1.5 px-1.5 py-0.2 bg-rose-500 text-white text-[9px] font-extrabold rounded animate-pulse">NEW</span>` : '';
+                    return `
+                        <div class="flex justify-between items-start text-xs bg-slate-50 p-2 rounded border border-slate-200">
+                            <div>
+                                <span class="font-bold text-slate-700 mr-1 text-[11px]">[${c.author || '익명'}]</span>
+                                <span class="text-slate-400 text-[10px] mr-2">${c.date}</span>
+                                <span class="text-slate-800">${c.text}</span>
+                                ${commentNewBadge}
+                            </div>
+                            <button onclick="deleteComment('${item.id}', ${cIdx})" class="text-slate-400 hover:text-rose-600 ml-2"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <button onclick="deleteComment('${item.id}', ${cIdx})" class="text-slate-400 hover:text-rose-600 ml-2"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
 
                 listEl.innerHTML += `
                     <div class="p-5 rounded-xl border ${isCheckedStyle} ${isImportantStyle} shadow-sm flex flex-col justify-between transition hover:shadow relative">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-2">
-                                <span class="px-2 py-0.5 border font-bold text-xs rounded ${badge.bg}">${badge.name}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 border font-bold text-xs rounded ${badge.bg}">${badge.name}</span>
+                                    ${noticeNewBadge}
+                                </div>
                                 ${ddayBadgeHtml}
                             </div>
                             <h3 class="font-bold text-sm ${titleColorStyle} mb-2 leading-snug">${item.ntceNm}</h3>
@@ -515,8 +565,10 @@
             const item = allNotices.find(n => n.id === id);
             if (item) {
                 if (!item.comments) item.comments = [];
-                const nowStr = new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                item.comments.push({ author: author, text: text, date: nowStr });
+                const now = new Date();
+                const nowStr = now.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                
+                item.comments.push({ author: author, text: text, date: nowStr, timestamp: now.getTime() });
 
                 saveState(id, { comments: item.comments });
                 textInput.value = '';
@@ -578,6 +630,9 @@
             else if (type === '민간입찰') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-purple-600 text-white shadow-sm";
             else if (type === '사전규격') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white shadow-sm";
             else if (type === '발주계획') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-orange-600 text-white shadow-sm";
+            else if (type === 'COMMENTS') activeTab.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white shadow-sm border border-amber-600";
+
+            document.getElementById('list-title').innerText = type === 'COMMENTS' ? '댓글 모아보기 목록' : '공고 목록';
 
             renderDashboard();
         }
