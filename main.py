@@ -1,17 +1,19 @@
 def save_web_dashboard_json(new_items):
+    print(f"[INFO] save_web_dashboard_json 호출됨. 전달받은 new_items 개수: {len(new_items)}개")
+    
     existing_items_map = {}
     if os.path.exists(WEB_JSON_FILE):
         try:
             with open(WEB_JSON_FILE, "r", encoding="utf-8") as f:
                 content = json.load(f)
-                # 형식이 리스트인 경우 딕셔너리로 감싸서 관리하도록 개선
                 old_data = content.get("notices", []) if isinstance(content, dict) else content
                 if isinstance(old_data, list):
                     for old_item in old_data:
                         if "id" in old_item:
                             existing_items_map[old_item["id"]] = old_item
-        except Exception:
-            pass
+            print(f"[INFO] 기존 notices.json에서 로드한 항목 수: {len(existing_items_map)}개")
+        except Exception as e:
+            print(f"[WARNING] 기존 JSON 파일 읽기 실패: {e}")
 
     combined_map = {}
     for item in existing_items_map.values():
@@ -19,7 +21,9 @@ def save_web_dashboard_json(new_items):
         combined_map[key] = item
 
     for idx, item in enumerate(new_items, 1):
-        key = f"{item.get('source_type')}_{item.get('title')}"
+        source_type = item.get('source_type')
+        title = item.get('title')
+        key = f"{source_type}_{title}"
         
         is_hidden = False
         comments = []
@@ -36,8 +40,8 @@ def save_web_dashboard_json(new_items):
 
         combined_map[key] = {
             "id": item_id,
-            "ntceKindNm": item.get('source_type'),
-            "ntceNm": item.get('title'),
+            "ntceKindNm": source_type,
+            "ntceNm": title,
             "organ": item.get('notice_instt'),
             "demandInstt": item.get('demand_instt', '-'),
             "price": item.get('price_str', '미기재'),
@@ -67,14 +71,21 @@ def save_web_dashboard_json(new_items):
     try:
         with open(WEB_JSON_FILE, "w", encoding="utf-8") as f:
             json.dump(final_output, f, ensure_ascii=False, indent=4)
+        print(f"[INFO] {WEB_JSON_FILE} 저장 완료 (총 항목 수: {len(combined_map)}개)")
         
         if os.environ.get("GITHUB_ACTIONS") == "true":
             subprocess.run(["git", "config", "--global", "user.name", "github-actions[bot]"], check=True)
             subprocess.run(["git", "config", "--global", "user.email", "github-actions[bot]@users.noreply.github.com"], check=True)
             subprocess.run(["git", "add", WEB_JSON_FILE], check=True)
+            
             status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
+            print(f"[INFO] git status 결과:\n{status.stdout}")
+            
             if status.stdout.strip():
                 subprocess.run(["git", "commit", "-m", "Auto-update notices.json via bot [skip ci]"], check=True)
                 subprocess.run(["git", "push"], check=True)
+                print("[INFO] Git commit 및 push 완료!")
+            else:
+                print("[INFO] 변경된 파일 내용이 없어 Git push를 건너뜁니다.")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"[ERROR] save_web_dashboard_json 실행 중 오류 발생: {e}")
